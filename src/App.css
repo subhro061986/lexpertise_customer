@@ -1,0 +1,39 @@
+/* #root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}*/
+
+body {
+  color: #1B2053;
+} 
+
+button{
+  cursor: pointer;
+}
+.btn_bordered{
+  border:1px solid #E8B34D;
+  color:#1B2053;
+  font-weight: bold;
+}
+.secondary_color{
+  color: #E8B34D;
+}
+.selected_tab_color{
+  background-color: #DDE1EA;
+}
+.color_1{
+  color:#363636
+}
+.input_border{
+  border:1px solid #E8B34D;
+}
+.btn_primary{
+  background-color: #E8B34D;
+  color: #1B2053;
+  font-weight: bold;
+}
+.bullet_span{
+  background-color: #192841;
+}
