@@ -29,19 +29,19 @@ const TopMenu = () => {
             href="#"
             className="text-sm font-medium hover:text-primary transition-colors"
           >
-            About
+            Home
           </a>
           <a
             href="#"
             className="text-sm font-medium hover:text-primary transition-colors"
           >
-            Databases
+            About Us
           </a>
           <a
             href="#"
             className="text-sm font-medium hover:text-primary transition-colors"
           >
-            Help
+            Pricing
           </a>
         </nav>
 
@@ -55,6 +55,7 @@ const TopMenu = () => {
             </button>
         </div>
       </div>
+
     </header>
     );
 }

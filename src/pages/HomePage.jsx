@@ -146,10 +146,29 @@ const HomePage = () => {
                 </div>
                 <div class="lg:col-span-6 space-y-2">
                   <label class="block text-sm font-semibold dark:text-[#e0dad7]">
+                    Search By
+                  </label>
+                  <div class="relative">
+                    <select class="form-select block w-full pl-10 pr-10 py-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg sm:text-sm dark:text-white transition-shadow shadow-sm">
+                      {/* <option disabled="" selected="" value="">All Categories</option> */}
+                      <option>Legislation</option>
+                      <option>Criminal</option>
+                      <option>Family</option>
+                      <option>Corporate</option>
+                    </select>                  </div>
+                </div>
+                {/* <div class="lg:col-span-2">
+                  <button class="px-4 py-2 btn_primary rounded-full">
+                      Search
+                  </button>
+                </div> */}
+              </div>
+              <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
+                <div class="lg:col-span-6 space-y-2">
+                  <label class="block text-sm font-semibold dark:text-[#e0dad7]">
                     Search Query
                   </label>
                   <div class="relative">
-                    
                     <input class="form-input block w-full pl-10 pr-4 py-3 text-base input_border bg-white dark:bg-[#251815] rounded-lg focus:ring-primary focus:border-primary  shadow-sm  dark:text-white" placeholder="Enter Case Number, Party Name, or Keyword" type="text" />
                   </div>
                 </div>
