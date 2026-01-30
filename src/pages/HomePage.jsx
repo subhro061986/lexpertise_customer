@@ -7,7 +7,7 @@ import monthly_update_img from "../assets/monthly_update.png";
 import advance_filling_img from "../assets/advance_filling.png";
 import mission_img from "../assets/mission.png";
 import values_img from "../assets/values.png";
-import bg_image from "../assets/background.png";  
+import bg_image from "../assets/background.png";
 
 const HomePage = () => {
   useEffect(() => {
@@ -17,32 +17,40 @@ const HomePage = () => {
   return (
     <>
       {/* Top Menu */}
-      <TopMenu />
-      <main class="flex-grow flex flex-col items-center justify-start pt-12 pb-20 px-4 sm:px-6 relative">
+      {/* <TopMenu /> */}
+      <main class="flex-grow flex flex-col items-center justify-start pt-0 pb-20 px-4 sm:px-6 relative">
         <div class="absolute top-0 left-0 w-full h-[600px] overflow-hidden -z-10">
           <div class="absolute inset-0 bg-gradient-to-b from-primary/5 to-transparent dark:from-primary/10"></div>
           <div class="absolute -top-20 -right-20 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div>
           <div class="absolute top-40 -left-20 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl"></div>
         </div>
         <div
-          className="px-6 flex justify-center bg-cover bg-center bg-no-repeat"
+          className="px-6 flex justify-center bg-cover bg-center bg-no-repeat mb-6 px-0 w-full"
           style={{ backgroundImage: `url(${bg_image})` }}
         >
+          <div className="text-center max-w-3xl space-y-4 dark:bg-[#2e1d19]/80 backdrop-blur-md p-5 rounded-2xl">
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#181311] dark:text-white leading-[1.15]">
+              Unravelling the Complexity of Legal Research
+            </h2>
+            <p className="text-lg sm:text-xl color_1 font-medium max-w-2xl mx-auto">
+              Access judgements and associated case toolkits to unravel the
+              complexity of legal research
+            </p>
+          </div>
+        </div>
           <div className="text-center max-w-3xl space-y-4 dark:bg-[#2e1d19]/80 backdrop-blur-md p-10 rounded-2xl">
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#181311] dark:text-white leading-[1.15]">
-              Judicial&nbsp;
+              Search the Judgment&nbsp;
               <span className="text-primary relative inline-block secondary_color">
                 Database
               </span>
             </h2>
 
             <p className="text-lg sm:text-xl color_1 font-medium max-w-2xl mx-auto">
-              Instant access to millions of judgments, orders, and case statuses
+              Gain instant access to millions of judgments, orders, and case statuses
               from Supreme, High, and District Courts.
             </p>
           </div>
-        </div>
-
         <div class="w-full max-w-5xl bg-white dark:bg-[#2e1d19] rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-[#e6dedb] dark:border-[#3e2c26] overflow-hidden">
           <div class="border-b border-[#e6dedb] dark:border-[#3e2c26] bg-[#faf8f7] dark:bg-[#251815] px-6 py-4">
             <label class="text-sm font-bold tracking-wider color_1 mb-3 block">

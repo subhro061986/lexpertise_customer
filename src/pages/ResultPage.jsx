@@ -20,7 +20,7 @@ const ResultPage = () => {
       <>
 
       {/* Top Menu */}
-      <TopMenu/>
+      {/* <TopMenu/> */}
         <main className="flex-1 max-w-[1440px] w-full mx-auto px-4 lg:px-8 py-6 lg:py-8 flex flex-col lg:flex-row gap-8">
           <aside className="w-full lg:w-80 shrink-0 flex flex-col gap-6">
             {/* <div className="lg:hidden flex justify-between items-center bg-white dark:bg-[#1a2632] p-4 rounded-lg border border-[#dbe0e6] dark:border-slate-700 shadow-sm cursor-pointer">

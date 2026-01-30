@@ -1,17 +1,20 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import lexLogo from '/logo.svg'
-import './App.css'
-import Navigation from './AppRouter'
+import { useState } from "react";
+import "./App.css";
+import Navigation from "./AppRouter";
+import LoginModal from "./layout/LoginModal";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [loginOpen, setLoginOpen] = useState(false);
 
   return (
     <>
-      <Navigation />
+      <Navigation onLoginClick={() => setLoginOpen(true)} />
+      <LoginModal
+        open={loginOpen}
+        onClose={() => setLoginOpen(false)}
+      />
     </>
-  )
+  );
 }
 
-export default App
+export default App;

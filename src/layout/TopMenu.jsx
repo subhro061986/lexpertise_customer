@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import hamburgerIcon from "../assets/hamburger.png";
 
-const TopMenu = () => {
+const TopMenu = ({ onLoginClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -41,10 +41,14 @@ const TopMenu = () => {
         </nav>
 
         {/* Auth Buttons */}
-        <div className="hidden md:flex gap-3">
-          <button className="px-4 py-2 border btn_bordered rounded-full">
+        <div className="hidden md:flex gap-3 text-sm">
+          <button
+            onClick={onLoginClick}
+            className="px-4 py-2 border btn_bordered rounded-full"
+          >
             Login
           </button>
+
           <button className="px-4 py-2 border btn_bordered rounded-full">
             Sign Up
           </button>
@@ -61,7 +65,7 @@ const TopMenu = () => {
 
       {/* Mobile Menu */}
       {isMenuOpen && (
-        <div className="absolute top-full left-0 w-full bg-white dark:bg-[#2e1d19] border-t md:hidden">
+        <div className="absolute top-full left-0 w-full bg-white dark:bg-[#2e1d19] border-t md:hidden shadow-xl z-50">
           <nav className="flex flex-col items-center gap-4 p-6 text-center">
             <Link
               to="/"
@@ -91,11 +95,17 @@ const TopMenu = () => {
             <div className="w-60 h-px bg-[#e6dedb] dark:bg-[#3e2c26] my-2"></div>
 
             {/* Auth Buttons */}
-            <div className="flex justify-center gap-4 mt-2">
+            <div className="flex justify-center gap-4 mt-2 text-sm">
               <button className="px-6 py-2 border btn_bordered rounded-full">
                 Sign Up
               </button>
-              <button className="px-6 py-2 border btn_bordered rounded-full">
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  onLoginClick();
+                }}
+                className="px-6 py-2 border btn_bordered rounded-full"
+              >
                 Login
               </button>
             </div>
