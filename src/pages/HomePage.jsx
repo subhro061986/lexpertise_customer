@@ -25,28 +25,28 @@ const HomePage = () => {
           <div class="absolute top-40 -left-20 w-72 h-72 bg-blue-500/5 rounded-full blur-3xl"></div>
         </div>
         <div
-          className="px-6 flex justify-center bg-cover bg-center bg-no-repeat mb-6 px-0 w-full"
+          className="px-6 flex justify-center bg-cover bg-center bg-no-repeat mb-1 px-0 w-full"
           style={{ backgroundImage: `url(${bg_image})` }}
         >
-          <div className="text-center max-w-3xl space-y-4 dark:bg-[#2e1d19]/80 backdrop-blur-md p-5 rounded-2xl">
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#181311] dark:text-white leading-[1.15]">
+          <div className="text-center max-w-3xl space-y-4 dark:bg-[#2e1d19]/80 backdrop-blur-md p-6 rounded-2xl">
+            <h2 className="text-[30px] sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#1B2053] dark:text-white leading-[1.15]">
               Unravelling the Complexity of Legal Research
             </h2>
-            <p className="text-lg sm:text-xl color_1 font-medium max-w-2xl mx-auto">
+            <p className="text-[13px] sm:text-xl color_1 font-medium max-w-2xl mx-auto">
               Access judgements and associated case toolkits to unravel the
               complexity of legal research
             </p>
           </div>
         </div>
           <div className="text-center max-w-3xl space-y-4 dark:bg-[#2e1d19]/80 backdrop-blur-md p-10 rounded-2xl">
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#181311] dark:text-white leading-[1.15]">
+            <h2 className="text-[20px] sm:text-3xl font-bold tracking-tight text-[#181311] dark:text-white leading-[1.15]">
               Search the Judgment&nbsp;
               <span className="text-primary relative inline-block secondary_color">
                 Database
               </span>
             </h2>
 
-            <p className="text-lg sm:text-xl color_1 font-medium max-w-2xl mx-auto">
+            <p className="text-[13px] color_1 font-medium max-w-2xl mx-auto">
               Gain instant access to millions of judgments, orders, and case statuses
               from Supreme, High, and District Courts.
             </p>
