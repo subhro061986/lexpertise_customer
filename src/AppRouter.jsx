@@ -5,10 +5,14 @@ import ResultPage from "./pages/ResultPage";
 import DetailsPage from "./pages/DetailsPage";
 import TopMenu from "./layout/TopMenu";
 
-const Navigation = ({ onLoginClick }) => {
+const Navigation = ({ onLoginClick, onSignupClick }) => {
   return (
     <Router>
-      <TopMenu onLoginClick={onLoginClick} />
+      <TopMenu
+        onLoginClick={onLoginClick}
+        onSignupClick={onSignupClick}
+      />
+
       <Routes>
         <Route path="/" Component={HomePage} />
         <Route path="/pricing" Component={PricingPage} />

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import hamburgerIcon from "../assets/hamburger.png";
 
-const TopMenu = ({ onLoginClick }) => {
+const TopMenu = ({ onLoginClick, onSignupClick }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   useEffect(() => {
@@ -49,7 +49,10 @@ const TopMenu = ({ onLoginClick }) => {
             Login
           </button>
 
-          <button className="px-4 py-2 border btn_bordered rounded-full">
+          <button
+            onClick={onSignupClick}
+            className="px-4 py-2 border btn_bordered rounded-full"
+          >
             Sign Up
           </button>
         </div>
@@ -96,9 +99,16 @@ const TopMenu = ({ onLoginClick }) => {
 
             {/* Auth Buttons */}
             <div className="flex justify-center gap-4 mt-2 text-sm">
-              <button className="px-6 py-2 border btn_bordered rounded-full">
+              <button
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  onSignupClick();
+                }}
+                className="px-6 py-2 border btn_bordered rounded-full"
+              >
                 Sign Up
               </button>
+
               <button
                 onClick={() => {
                   setIsMenuOpen(false);
