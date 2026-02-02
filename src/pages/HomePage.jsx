@@ -142,6 +142,7 @@ const HomePage = () => {
                   </label>
                   <select class="form-select block w-full py-3 text-base input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg focus:ring-primary focus:border-primary sm:text-sm dark:text-white shadow-sm">
                     <option value="">All</option>
+                    <option>2025</option>
                     <option>2024</option>
                     <option>2023</option>
                     <option>2022</option>
