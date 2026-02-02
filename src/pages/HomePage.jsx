@@ -197,6 +197,11 @@ const HomePage = () => {
                   Search
                 </button>
               </div>
+              <div class="lg:col-span-4">
+                <button class="px-4 py-2 selected_tab_color rounded-full">
+                  Advance Search
+                </button>
+              </div>
             </div>
             {/* <div class="flex flex-wrap gap-4 pt-2">
                 <span class="text-sm text-[#8a6b60] dark:text-[#a08d87]">Popular Searches:</span>
