@@ -40,3 +40,13 @@ button{
 .background_yellow{
   background-color: #E8B34D;
 }
+input[type="checkbox"]:checked::after {
+  content: "✓";
+  color: #1B2053;
+  font-size: 14px;
+  font-weight: bold;
+  position: absolute;
+  left: 3px;
+  top: -1px;
+}
+

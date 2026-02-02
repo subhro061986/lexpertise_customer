@@ -4,9 +4,13 @@ import Navigation from "./AppRouter";
 import LoginModal from "./layout/LoginModal";
 import SignUpModal from "./layout/SignupModal";
 
+// temporary
+import DisclaimerModal from "./layout/DisclaimerModal";
+
 function App() {
   const [loginOpen, setLoginOpen] = useState(false);
   const [signupOpen, setSignupOpen] = useState(false);
+  const [showDisclaimer, setShowDisclaimer] = useState(true);
 
   return (
     <>
@@ -36,6 +40,14 @@ function App() {
         onLoginClick={() => {
           setSignupOpen(false);
           setLoginOpen(true);
+        }}
+      />
+
+      <DisclaimerModal
+        open={showDisclaimer}
+        onClose={() => setShowDisclaimer(false)}
+        onAgree={() => {
+          setShowDisclaimer(false);
         }}
       />
     </>

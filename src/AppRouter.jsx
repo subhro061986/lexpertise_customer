@@ -4,6 +4,7 @@ import PricingPage from "./pages/PricingPage";
 import ResultPage from "./pages/ResultPage";
 import DetailsPage from "./pages/DetailsPage";
 import TopMenu from "./layout/TopMenu";
+import AboutPage from "./pages/AboutUsPage";
 
 const Navigation = ({ onLoginClick, onSignupClick }) => {
   return (
@@ -18,6 +19,7 @@ const Navigation = ({ onLoginClick, onSignupClick }) => {
         <Route path="/pricing" Component={PricingPage} />
         <Route path="/result" Component={ResultPage} />
         <Route path="/details" Component={DetailsPage} />
+        <Route path="/about" Component={AboutPage} />
       </Routes>
     </Router>
   );
