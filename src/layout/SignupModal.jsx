@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import closecircle from "../assets/close-circle.png";
 import emailIcon from "../assets/sms-yellow.png";
 import eyeIcon from "../assets/eye.png";
@@ -6,13 +6,106 @@ import contactIcon from "../assets/profile-circle.png";
 import callIcon from "../assets/call-yellow.png";
 import locationTickIcon from "../assets/location-tick.svg";
 
+import { sendOtp, verifyOtp } from "../api/otp";
+import { createAccount } from "../api/auth";
+
 const SignUpModal = ({ open, onClose, onLoginClick }) => {
   const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
+  const [otp, setOtp] = useState("");
+
+  const [form, setForm] = useState({
+    full_name: "",
+    phone: "",
+    street_address: "",
+    city: "",
+    state: "",
+    profession: "",
+    institution: "",
+    graduation_year: "",
+    password: "",
+    confirm_password: "",
+  });
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
+  useEffect(() => {
+    if (open) {
+      setStep(1);
+      setEmail("");
+      setOtp("");
+      setForm({
+        full_name: "",
+        phone: "",
+        street_address: "",
+        city: "",
+        state: "",
+        profession: "",
+        institution: "",
+        graduation_year: "",
+        password: "",
+        confirm_password: "",
+      });
+      setError("");
+      setShowPassword(false);
+      setShowConfirmPassword(false);
+    }
+  }, [open]);
+  
   if (!open) return null;
+
+  /* ================= BACKEND HANDLERS ================= */
+
+  const handleSendOtp = async () => {
+    try {
+      setError("");
+      setLoading(true);
+      await sendOtp(email);
+      setStep(2);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    try {
+      setError("");
+      setLoading(true);
+      await verifyOtp(email, otp);
+      setStep(3);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleCreateAccount = async () => {
+    try {
+      setError("");
+      setLoading(true);
+
+      await createAccount({
+        email,
+        ...form,
+        graduation_year: Number(form.graduation_year),
+      });
+
+      onClose();
+      onLoginClick();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ================= UI ================= */
 
   return (
     <div className="fixed inset-0 z-[9999] bg-black/40 flex items-center justify-center">
@@ -33,8 +126,12 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
           </p>
         </div>
 
-        {/* ================= BODY (SCROLLABLE) ================= */}
+        {/* ================= BODY ================= */}
         <div className="px-6 py-6 overflow-y-auto flex-1">
+
+          {error && (
+            <p className="text-red-600 text-sm text-left mb-5 whitespace-pre-line leading-snug">{error}</p>
+          )}
 
           {/* ========== STEP 1 : EMAIL ========== */}
           {step === 1 && (
@@ -56,18 +153,16 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
               </div>
 
               <button
-                onClick={() => setStep(2)}
+                onClick={handleSendOtp}
+                disabled={loading}
                 className="w-40 mt-8 py-3 rounded-full btn_primary block mx-auto"
               >
-                Send OTP
+                {loading ? "Sending..." : "Send OTP"}
               </button>
 
               <div className="text-center text-sm mt-6">
                 Already have an account?{" "}
-                <span
-                  onClick={onLoginClick}
-                  className="font-bold cursor-pointer"
-                >
+                <span onClick={onLoginClick} className="font-bold cursor-pointer">
                   Sign in
                 </span>
               </div>
@@ -97,26 +192,19 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
               </label>
               <input
                 type="text"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
                 placeholder="000000"
                 className="w-full mt-1 px-3 py-2 rounded-md input_border tracking-widest text-center"
               />
 
               <button
-                onClick={() => setStep(3)}
+                onClick={handleVerifyOtp}
+                disabled={loading}
                 className="w-40 mt-8 py-3 rounded-full btn_primary block mx-auto"
               >
-                Validate
+                {loading ? "Validating..." : "Validate"}
               </button>
-
-              <div className="text-center text-sm mt-6">
-                Already have an account?{" "}
-                <span
-                  onClick={onLoginClick}
-                  className="font-bold cursor-pointer"
-                >
-                  Sign in
-                </span>
-              </div>
             </>
           )}
 
@@ -124,7 +212,7 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
           {step === 3 && (
             <div className="space-y-4">
 
-              {/* Email again (before Full Name) */}
+              {/* Email */}
               <div>
                 <label className="text-sm font-medium">Email Address</label>
                 <div className="relative mt-1">
@@ -142,147 +230,150 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                 </div>
               </div>
 
+              {/* Full Name */}
               <div>
                 <label className="text-sm font-medium">Full Name</label>
                 <div className="relative mt-1">
                   <input
-                    placeholder="Enter Your Name"
+                    value={form.full_name}
+                    onChange={(e) =>
+                      setForm({ ...form, full_name: e.target.value })
+                    }
                     className="w-full px-3 py-2 rounded-md input_border pr-10"
                   />
-                  <img
-                    src={contactIcon}
-                    alt="Name"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5"
-                  />
+                  <img src={contactIcon} className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5" />
                 </div>
               </div>
 
+              {/* Phone */}
               <div>
                 <label className="text-sm font-medium">Phone No</label>
                 <div className="relative mt-1">
                   <input
-                    placeholder="+91"
+                    value={form.phone}
+                    onChange={(e) =>
+                      setForm({ ...form, phone: e.target.value })
+                    }
                     className="w-full px-3 py-2 rounded-md input_border pr-10"
                   />
-                  <img
-                    src={callIcon}
-                    alt="Phone"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5"
-                  />
+                  <img src={callIcon} className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5" />
                 </div>
               </div>
 
+              {/* Address */}
               <div>
                 <label className="text-sm font-medium">Street Address</label>
                 <div className="relative mt-1">
                   <input
-                    placeholder="Your full address"
-                    className="w-full px-3 py-2 rounded-md input_border pr-10"
-                  />
-                  <img
-                    src={locationTickIcon}
-                    alt="Address"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-4">
-                <div className="w-1/2">
-                  <label className="text-sm font-medium">City</label>
-                  <select className="w-full mt-1 px-3 py-2 rounded-md input_border">
-                    <option>Your City</option>
-                  </select>
-                </div>
-
-                <div className="w-1/2">
-                  <label className="text-sm font-medium">State</label>
-                  <select className="w-full mt-1 px-3 py-2 rounded-md input_border">
-                    <option>Your State</option>
-                  </select>
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Profession</label>
-                <select className="w-full mt-1 px-3 py-2 rounded-md input_border">
-                  <option>Judge</option>
-                  <option>Advocate</option>
-                  <option>Student</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">
-                  Institution / Organization
-                </label>
-                <input
-                  placeholder="Type here"
-                  className="w-full mt-1 px-3 py-2 rounded-md input_border"
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">
-                  Year of Graduation
-                </label>
-                <input
-                  placeholder="Type here"
-                  className="w-full mt-1 px-3 py-2 rounded-md input_border"
-                />
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">Password</label>
-                <div className="relative mt-1">
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter Your Password"
-                    className="w-full px-3 py-2 rounded-md input_border pr-10"
-                  />
-                  <img
-                    src={eyeIcon}
-                    alt="View"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 cursor-pointer"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="text-sm font-medium">
-                  Confirm Password
-                </label>
-                <div className="relative mt-1">
-                  <input
-                    type={showConfirmPassword ? "text" : "password"}
-                    placeholder="Re-enter password"
-                    className="w-full px-3 py-2 rounded-md input_border pr-10"
-                  />
-                  <img
-                    src={eyeIcon}
-                    alt="View"
-                    onClick={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
+                    value={form.street_address}
+                    onChange={(e) =>
+                      setForm({ ...form, street_address: e.target.value })
                     }
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 cursor-pointer"
+                    className="w-full px-3 py-2 rounded-md input_border pr-10"
                   />
+                  <img src={locationTickIcon} className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5" />
                 </div>
               </div>
 
-              <button className="w-52 mt-6 py-3 rounded-full btn_primary block mx-auto">
-                Create Account
-              </button>
-
-              <div className="text-center text-sm mt-6">
-                Already have an account?{" "}
-                <span
-                  onClick={onLoginClick}
-                  className="font-bold cursor-pointer"
-                >
-                  Sign in
-                </span>
+              {/* City & State */}
+              <div className="flex gap-4">
+                <input
+                  placeholder="City"
+                  value={form.city}
+                  onChange={(e) =>
+                    setForm({ ...form, city: e.target.value })
+                  }
+                  className="w-1/2 px-3 py-2 rounded-md input_border"
+                />
+                <input
+                  placeholder="State"
+                  value={form.state}
+                  onChange={(e) =>
+                    setForm({ ...form, state: e.target.value })
+                  }
+                  className="w-1/2 px-3 py-2 rounded-md input_border"
+                />
               </div>
+
+              {/* Profession */}
+              <select
+                value={form.profession}
+                onChange={(e) =>
+                  setForm({ ...form, profession: e.target.value })
+                }
+                className="w-full px-3 py-2 rounded-md input_border"
+              >
+                <option value="">Select Profession</option>
+                <option>Judge</option>
+                <option>Advocate</option>
+                <option>Student</option>
+              </select>
+
+              {/* Institution */}
+              <input
+                placeholder="Institution / Organization"
+                value={form.institution}
+                onChange={(e) =>
+                  setForm({ ...form, institution: e.target.value })
+                }
+                className="w-full px-3 py-2 rounded-md input_border"
+              />
+
+              {/* Graduation Year */}
+              <input
+                placeholder="Year of Graduation"
+                value={form.graduation_year}
+                onChange={(e) =>
+                  setForm({ ...form, graduation_year: e.target.value })
+                }
+                className="w-full px-3 py-2 rounded-md input_border"
+              />
+
+              {/* Password */}
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  value={form.password}
+                  onChange={(e) =>
+                    setForm({ ...form, password: e.target.value })
+                  }
+                  className="w-full px-3 py-2 rounded-md input_border pr-10"
+                  placeholder="Enter Password"
+                />
+                <img
+                  src={eyeIcon}
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 cursor-pointer"
+                />
+              </div>
+
+              {/* Confirm Password */}
+              <div className="relative">
+                <input
+                  type={showConfirmPassword ? "text" : "password"}
+                  value={form.confirm_password}
+                  onChange={(e) =>
+                    setForm({ ...form, confirm_password: e.target.value })
+                  }
+                  className="w-full px-3 py-2 rounded-md input_border pr-10"
+                  placeholder="Confirm Password"
+                />
+                <img
+                  src={eyeIcon}
+                  onClick={() =>
+                    setShowConfirmPassword(!showConfirmPassword)
+                  }
+                  className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 cursor-pointer"
+                />
+              </div>
+
+              <button
+                onClick={handleCreateAccount}
+                disabled={loading}
+                className="w-52 mt-6 py-3 rounded-full btn_primary block mx-auto"
+              >
+                {loading ? "Creating..." : "Create Account"}
+              </button>
             </div>
           )}
 

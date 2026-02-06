@@ -16,8 +16,7 @@ const Footer = () => {
         <div className="space-y-10 lg:hidden">
           {/* Brand */}
           <div className="space-y-3">
-            <img src={lexpertiseLogo} alt="Lexpertise" className="h-14 w-14" />
-            <p className="text-sm text-[#6d544b]">Judgments. Simplified.</p>
+            <img src={lexpertiseLogo} alt="Lexpertise" className="h-20 w-20" />
           </div>
 
           {/* Links + Platforms */}
@@ -88,8 +87,7 @@ const Footer = () => {
         <div className="hidden lg:grid lg:grid-cols-5 lg:gap-20">
           {/* Brand */}
           <div className="space-y-3">
-            <img src={lexpertiseLogo} alt="Lexpertise" className="h-14 w-14" />
-            <p className="text-sm text-[#6d544b]">Judgments. Simplified.</p>
+            <img src={lexpertiseLogo} alt="Lexpertise" className="h-20 w-20" />
           </div>
 
           {/* Links */}
