@@ -1,9 +1,20 @@
 import React from "react";
 import googleLogo from "../assets/google.png";
 import closecircle from "../assets/close-circle.png";
+import { useAuth } from "../context/AuthContext";
 
 const LoginModal = ({ open, onClose }) => {
+  const {logIn} = useAuth()
   if (!open) return null;
+
+  const handleLogin = async() => {  
+    let dataSet={
+      email:'',
+      password:''
+    } 
+    const resp=await logIn(dataSet)
+    console.log("LOGIN RESPONSE",resp)
+  }
 
   return (
     <div className="fixed inset-0 z-[9999] bg-black/40 flex items-center justify-center">
@@ -55,7 +66,10 @@ const LoginModal = ({ open, onClose }) => {
 
           <div className="text-right text-sm mt-2">Forget Password?</div>
 
-          <button className="w-40 mt-6 py-3 rounded-full btn_primary block mx-auto">
+          <button 
+            className="w-40 mt-6 py-3 rounded-full btn_primary block mx-auto"
+            onClick={() => {handleLogin()}}
+            >
             Login
           </button>
 

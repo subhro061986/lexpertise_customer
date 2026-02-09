@@ -1,0 +1,5 @@
+{
+    "API_URL": "http://103.211.217.25:5000/api/",
+    "LOGIN_API":"login",
+    "GET_USER":"get_user"   
+}

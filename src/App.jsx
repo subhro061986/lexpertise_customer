@@ -6,6 +6,8 @@ import SignUpModal from "./layout/SignupModal";
 
 // temporary
 import DisclaimerModal from "./layout/DisclaimerModal";
+import { AuthProvider } from "./context/AuthContext";
+import { UserProvider } from "./context/UserContext";
 
 function App() {
   const [loginOpen, setLoginOpen] = useState(false);
@@ -14,6 +16,8 @@ function App() {
 
   return (
     <>
+    <AuthProvider>
+      <UserProvider>
       <Navigation
         onLoginClick={() => {
           setSignupOpen(false);
@@ -50,6 +54,8 @@ function App() {
           setShowDisclaimer(false);
         }}
       />
+      </UserProvider>
+      </AuthProvider>
     </>
   );
 }
