@@ -1,82 +1,103 @@
-import React, {
-  createContext,
-  useState,
-  useContext,
-  useEffect,
-  useRef
-} from "react";
+import React, { createContext, useContext, useState } from "react";
 import axios from "axios";
-import Config from "../config/config.json"
-
-
-//enablePromise(true)
+import Config from "../config/config.json";
 
 const AuthContext = createContext();
 
-const AuthProvider = ({ children}) => {
-  const [authData, setAuthData] = useState('');
-  
-  
-  useEffect(() => {
-    //setAsyncStorage()
-    }, [authData])
+const AuthProvider = ({ children }) => {
+  const [loading, setLoading] = useState(false);
 
-  
-  
-   
-  const logIn = async (arg) => {
+  /* ================= SEND OTP ================= */
+  const sendOtp = async (email) => {
     try {
-        const response = await axios.post( Config.API_URL + Config.LOGIN_API, arg, 
+      setLoading(true);
+
+      const response = await axios.post(
+        Config.API_URL + "/otp/send",
+        { email },
         {
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        
-      })
-      
-      if(response.data.status==='success'){
-        //console.log("LOGIN CONTEXT RESPONSE",JSON.stringify(response.data.data.userlocation.location))
-        setAuthData(response.data.data.UserId)
-        
-      }
-      else{
-        setAuthData('')
-      }
-      return response.data
+          headers: { "Content-Type": "application/json" },
+        }
+      );
 
+      return response.data;
     } catch (error) {
-        setAuthData('')
-        console.log("LOGIN CONTEXT ERROR",error)
-        return {status:'error',message:'Network Error'}
+      throw new Error(
+        error.response?.data?.detail || "Failed to send OTP"
+      );
+    } finally {
+      setLoading(false);
     }
-    
-  }
+  };
 
-  
-  
- 
-  
+  /* ================= VERIFY OTP ================= */
+  const verifyOtp = async (email, otp) => {
+    try {
+      setLoading(true);
+
+      const response = await axios.post(
+        Config.API_URL + "/otp/verify",
+        {
+          email,
+          otp: Number(otp),
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      throw new Error(
+        error.response?.data?.detail || "OTP verification failed"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ================= CREATE ACCOUNT ================= */
+  const createAccount = async (payload) => {
+    try {
+      setLoading(true);
+
+      const response = await axios.post(
+        Config.API_URL + "/users/create-account",
+        payload,
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      return response.data;
+    } catch (error) {
+      const detail = error.response?.data?.detail;
+
+      if (Array.isArray(detail)) {
+        const message = detail.map((err) => err.msg).join("\n");
+        throw new Error(message);
+      }
+
+      throw new Error(detail || "Account creation failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <AuthContext.Provider
       value={{
-        logIn,
-        authData,
+        sendOtp,
+        verifyOtp,
+        createAccount,
+        loading,
       }}
     >
       {children}
-      
     </AuthContext.Provider>
-  )
-}
-function useAuth() {
-  const context = useContext(AuthContext)
+  );
+};
 
-  // if (!context) {
-  //   throw new Error('userProfile must be used within an userProvider')
-  // }
+const useAuth = () => useContext(AuthContext);
 
-  return context
-}
-export { AuthContext, AuthProvider, useAuth }
-
-
+export { AuthProvider, useAuth };

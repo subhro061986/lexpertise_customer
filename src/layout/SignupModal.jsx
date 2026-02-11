@@ -6,8 +6,7 @@ import contactIcon from "../assets/profile-circle.png";
 import callIcon from "../assets/call-yellow.png";
 import locationTickIcon from "../assets/location-tick.svg";
 
-import { sendOtp, verifyOtp } from "../api/otp";
-import { createAccount } from "../api/auth";
+import { useAuth } from "../context/AuthContext";
 
 const SignUpModal = ({ open, onClose, onLoginClick }) => {
   const [step, setStep] = useState(1);
@@ -27,9 +26,10 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
     confirm_password: "",
   });
 
+  const { sendOtp, verifyOtp, createAccount, loading } = useAuth();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -54,41 +54,44 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
       setShowConfirmPassword(false);
     }
   }, [open]);
-  
+
   if (!open) return null;
 
   /* ================= BACKEND HANDLERS ================= */
 
   const handleSendOtp = async () => {
+    if (!email) {
+      setError("Email is required");
+      return;
+    }
+
     try {
       setError("");
-      setLoading(true);
       await sendOtp(email);
       setStep(2);
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleVerifyOtp = async () => {
+    if (!otp) {
+      setError("OTP is required");
+      return;
+    }
+
     try {
       setError("");
-      setLoading(true);
       await verifyOtp(email, otp);
       setStep(3);
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
   const handleCreateAccount = async () => {
     try {
       setError("");
-      setLoading(true);
 
       await createAccount({
         email,
@@ -100,8 +103,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
       onLoginClick();
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoading(false);
     }
   };
 
@@ -130,7 +131,9 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
         <div className="px-6 py-6 overflow-y-auto flex-1">
 
           {error && (
-            <p className="text-red-600 text-sm text-left mb-5 whitespace-pre-line leading-snug">{error}</p>
+            <p className="text-red-600 text-sm text-left mb-5 whitespace-pre-line leading-snug">
+              {error}
+            </p>
           )}
 
           {/* ========== STEP 1 : EMAIL ========== */}
@@ -212,7 +215,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
           {step === 3 && (
             <div className="space-y-4">
 
-              {/* Email */}
               <div>
                 <label className="text-sm font-medium">Email Address</label>
                 <div className="relative mt-1">
@@ -230,7 +232,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                 </div>
               </div>
 
-              {/* Full Name */}
               <div>
                 <label className="text-sm font-medium">Full Name</label>
                 <div className="relative mt-1">
@@ -245,7 +246,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                 </div>
               </div>
 
-              {/* Phone */}
               <div>
                 <label className="text-sm font-medium">Phone No</label>
                 <div className="relative mt-1">
@@ -260,7 +260,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                 </div>
               </div>
 
-              {/* Address */}
               <div>
                 <label className="text-sm font-medium">Street Address</label>
                 <div className="relative mt-1">
@@ -275,7 +274,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                 </div>
               </div>
 
-              {/* City & State */}
               <div className="flex gap-4">
                 <input
                   placeholder="City"
@@ -295,7 +293,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                 />
               </div>
 
-              {/* Profession */}
               <select
                 value={form.profession}
                 onChange={(e) =>
@@ -309,7 +306,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                 <option>Student</option>
               </select>
 
-              {/* Institution */}
               <input
                 placeholder="Institution / Organization"
                 value={form.institution}
@@ -319,7 +315,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                 className="w-full px-3 py-2 rounded-md input_border"
               />
 
-              {/* Graduation Year */}
               <input
                 placeholder="Year of Graduation"
                 value={form.graduation_year}
@@ -329,7 +324,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                 className="w-full px-3 py-2 rounded-md input_border"
               />
 
-              {/* Password */}
               <div className="relative">
                 <input
                   type={showPassword ? "text" : "password"}
@@ -347,7 +341,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                 />
               </div>
 
-              {/* Confirm Password */}
               <div className="relative">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
