@@ -31,12 +31,18 @@ const ResultPage = () => {
       keyword && keyword.trim() !== "" ? keyword.trim() : null;
 
     const updatedFilters = {
-      ...filters,
-      search_by: searchMode === "basic" ? searchBy : null,
-      keyword: trimmedKeyword,
+      ...filters, // keep all existing filters
     };
 
+    if (searchMode === "basic") {
+      updatedFilters.search_by = searchBy;
+      updatedFilters.keyword = trimmedKeyword;
+    } else {
+      updatedFilters.keyword = trimmedKeyword;
+    }
+
     setFilters(updatedFilters);
+
     executeSearch(1, updatedFilters);
   };
 
@@ -139,10 +145,37 @@ const ResultPage = () => {
                     <div className="flex flex-col gap-2 text-sm text-[#617589] dark:text-slate-400 mb-6">
                       <div className="flex items-center gap-2">
                         <img src={calendar_img} alt="calendar" />
-                        <span>
+                        {/* <span>
                           {new Date(
                             caseDetails?.order_or_judgement_date,
                           ).toLocaleDateString()}
+                        </span> */}
+                        <span>
+                          {(() => {
+                            const rawDate =
+                              caseDetails?.order_or_judgement_date;
+                            if (!rawDate) return "N/A";
+
+                            // Remove ordinal suffix (st, nd, rd, th) and comma
+                            const cleanedDate = rawDate
+                              .replace(/(\d+)(st|nd|rd|th)/, "$1")
+                              .replace(",", "");
+
+                            const parsedDate = new Date(cleanedDate);
+
+                            if (isNaN(parsedDate.getTime())) return "N/A";
+
+                            const day = String(parsedDate.getDate()).padStart(
+                              2,
+                              "0",
+                            );
+                            const month = String(
+                              parsedDate.getMonth() + 1,
+                            ).padStart(2, "0");
+                            const year = parsedDate.getFullYear();
+
+                            return `${day}/${month}/${year}`;
+                          })()}
                         </span>
                       </div>
                     </div>

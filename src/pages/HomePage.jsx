@@ -149,7 +149,7 @@ const HomePage = () => {
                     className="form-select w-full py-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg sm:text-sm dark:text-white shadow-sm"
                   >
                     <option value="">All</option>
-                    {Array.from({ length: 30 }, (_, i) => {
+                    {Array.from({ length: 7 }, (_, i) => {
                       const y = new Date().getFullYear() - i;
                       return (
                         <option key={y} value={y}>
