@@ -1,13 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import TopMenu from "../layout/TopMenu";
+import React, { useEffect, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { SearchContext } from "../context/SearchContext";
 import Footer from "../layout/Footer";
-import DisclaimerModal from "../layout/DisclaimerModal";
-import secure_access_img from "../assets/secure_access.png";
-import monthly_update_img from "../assets/monthly_update.png";
-import advance_filling_img from "../assets/advance_filling.png";
-import mission_img from "../assets/mission.png";
-import values_img from "../assets/values.png";
+// import DisclaimerModal from "../layout/DisclaimerModal";
 import bg_image from "../assets/background.png";
 
 const HomePage = () => {
@@ -15,33 +10,59 @@ const HomePage = () => {
     window.scrollTo(0, 0);
   }, []);
 
-  const [showDisclaimer, setShowDisclaimer] = useState(true);
   const navigate = useNavigate();
-  const [searchBy, setSearchBy] = useState("Legislation");
+  const { setSearchMode, setFilters } = useContext(SearchContext);
+
+  // const [showDisclaimer, setShowDisclaimer] = useState(true);
+  const [searchBy, setSearchBy] = useState("keyword");
   const [isAdvanced, setIsAdvanced] = useState(false);
+
+  const [categoryId, setCategoryId] = useState("");
+  const [year, setYear] = useState("");
+  const [month, setMonth] = useState("");
+  const [keyword, setKeyword] = useState("");
 
   const getPlaceholder = () => {
     switch (searchBy) {
-      case "Legislation":
+      case "case_no":
+        return "Enter Case Number";
+      case "case_name":
+        return "Enter Case Name";
+      case "party_name":
+        return "Enter Party Name";
+      case "judge":
+        return "Enter Judge Name";
+      case "legislation":
         return "Enter Legislation";
-      case "Criminal":
-        return "Enter Criminal Details";
-      case "Family":
-        return "Enter Family Case Details";
-      case "Corporate":
-        return "Enter Corporate Case Details";
       default:
-        return "Search Keywords";
+        return "Enter Keyword";
     }
+  };
+
+  const handleSearch = () => {
+    const trimmedKeyword =
+      keyword && keyword.trim() !== "" ? keyword.trim() : null;
+
+    setSearchMode(isAdvanced ? "advanced" : "basic");
+
+    setFilters({
+      category_id: categoryId ? Number(categoryId) : null,
+      year: year ? Number(year) : null,
+      month: month ? Number(month) : null,
+      keyword: trimmedKeyword,
+      search_by: isAdvanced ? null : searchBy,
+    });
+
+    navigate("/search-results");
   };
 
   return (
     <>
-      <DisclaimerModal
+      {/* <DisclaimerModal
         open={showDisclaimer}
         onClose={() => setShowDisclaimer(false)}
         onAgree={() => setShowDisclaimer(false)}
-      />
+      /> */}
 
       <main className="flex-grow flex flex-col items-center justify-start pt-0 pb-20 px-4 sm:px-6 relative">
         {/* Background */}
@@ -101,12 +122,16 @@ const HomePage = () => {
                 <label className="block text-sm font-semibold dark:text-[#e0dad7]">
                   Case Category
                 </label>
-                <select className="form-select block w-full py-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg sm:text-sm dark:text-white shadow-sm">
+                <select
+                  value={categoryId}
+                  onChange={(e) => setCategoryId(e.target.value)}
+                  className="form-select block w-full py-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg"
+                >
                   <option value="">All Categories</option>
-                  <option>Civil</option>
-                  <option>Criminal</option>
-                  <option>Family</option>
-                  <option>Corporate</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
                 </select>
               </div>
             </div>
@@ -118,16 +143,44 @@ const HomePage = () => {
                   <label className="block text-sm font-semibold dark:text-[#e0dad7]">
                     Year
                   </label>
-                  <select className="form-select w-full py-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg sm:text-sm dark:text-white shadow-sm">
+                  <select
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                    className="form-select w-full py-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg sm:text-sm dark:text-white shadow-sm"
+                  >
                     <option value="">All</option>
+                    {Array.from({ length: 30 }, (_, i) => {
+                      const y = new Date().getFullYear() - i;
+                      return (
+                        <option key={y} value={y}>
+                          {y}
+                        </option>
+                      );
+                    })}
                   </select>
                 </div>
                 <div>
                   <label className="block text-sm font-semibold dark:text-[#e0dad7]">
                     Month
                   </label>
-                  <select className="form-select w-full py-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg sm:text-sm dark:text-white shadow-sm">
+                  <select
+                    value={month}
+                    onChange={(e) => setMonth(e.target.value)}
+                    className="form-select w-full py-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg sm:text-sm dark:text-white shadow-sm"
+                  >
                     <option value="">All</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
                   </select>
                 </div>
               </div>
@@ -141,12 +194,14 @@ const HomePage = () => {
                   <select
                     value={searchBy}
                     onChange={(e) => setSearchBy(e.target.value)}
-                    className="form-select block w-full py-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg sm:text-sm dark:text-white shadow-sm"
+                    className="form-select block w-full py-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg"
                   >
-                    <option>Legislation</option>
-                    <option>Criminal</option>
-                    <option>Family</option>
-                    <option>Corporate</option>
+                    <option value="keyword">Keyword</option>
+                    <option value="case_no">Case Number</option>
+                    <option value="case_name">Case Name</option>
+                    <option value="party_name">Party Name</option>
+                    <option value="judge">Judge</option>
+                    <option value="legislation">Legislation</option>
                   </select>
                 </div>
               )}
@@ -161,7 +216,9 @@ const HomePage = () => {
                   Search Query
                 </label>
                 <input
-                  className="form-input block w-full p-3 input_border bg-white dark:bg-[#251815] rounded-lg shadow-sm dark:text-white"
+                  value={keyword}
+                  onChange={(e) => setKeyword(e.target.value)}
+                  className="form-input block w-full p-3 input_border bg-white dark:bg-[#251815] rounded-lg"
                   placeholder={
                     isAdvanced
                       ? "Legislation, Section, Judge, Keywords"
@@ -173,13 +230,7 @@ const HomePage = () => {
 
               <div className="lg:col-span-2">
                 <button
-                  onClick={() =>
-                    navigate("/search-results", {
-                      state: {
-                        mode: isAdvanced ? "advanced" : "basic",
-                      },
-                    })
-                  }
+                  onClick={handleSearch}
                   className="px-4 py-2 btn_primary rounded-full"
                 >
                   Search

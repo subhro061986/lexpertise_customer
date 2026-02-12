@@ -7,6 +7,7 @@ import SignUpModal from "./layout/SignupModal";
 // temporary
 // import DisclaimerModal from "./layout/DisclaimerModal";
 import { AuthProvider } from "./context/AuthContext";
+import { SearchProvider } from "./context/SearchContext";
 // import { UserProvider } from "./context/UserContext";
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
   return (
     <>
     <AuthProvider>
+      <SearchProvider>
       {/* <UserProvider> */}
       <Navigation
         onLoginClick={() => {
@@ -55,6 +57,7 @@ function App() {
         }}
       /> */}
       {/* </UserProvider> */}
+      </SearchProvider>
       </AuthProvider>
     </>
   );

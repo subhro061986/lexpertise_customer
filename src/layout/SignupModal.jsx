@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import DisclaimerModal from "../layout/DisclaimerModal";
 import closecircle from "../assets/close-circle.png";
 import emailIcon from "../assets/sms-yellow.png";
 import eyeIcon from "../assets/eye.png";
@@ -27,7 +28,7 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
   });
 
   const { sendOtp, verifyOtp, createAccount, loading } = useAuth();
-
+  const [showDisclaimer, setShowDisclaimer] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState("");
@@ -111,7 +112,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
   return (
     <div className="fixed inset-0 z-[9999] bg-black/40 flex items-center justify-center">
       <div className="relative bg-white w-[92%] max-w-md rounded-2xl shadow-md overflow-hidden max-h-[90vh] flex flex-col">
-
         {/* ================= HEADER ================= */}
         <div className="bg-[#F5F6F7] p-6 relative flex-shrink-0">
           <button onClick={onClose} className="absolute top-4 right-4">
@@ -129,7 +129,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
 
         {/* ================= BODY ================= */}
         <div className="px-6 py-6 overflow-y-auto flex-1">
-
           {error && (
             <p className="text-red-600 text-sm text-left mb-5 whitespace-pre-line leading-snug">
               {error}
@@ -139,6 +138,11 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
           {/* ========== STEP 1 : EMAIL ========== */}
           {step === 1 && (
             <>
+              <DisclaimerModal
+                open={showDisclaimer}
+                onClose={() => setShowDisclaimer(false)}
+                onAgree={() => setShowDisclaimer(false)}
+              />
               <label className="text-sm font-medium">Email Address</label>
               <div className="relative mt-1">
                 <input
@@ -165,7 +169,10 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
 
               <div className="text-center text-sm mt-6">
                 Already have an account?{" "}
-                <span onClick={onLoginClick} className="font-bold cursor-pointer">
+                <span
+                  onClick={onLoginClick}
+                  className="font-bold cursor-pointer"
+                >
                   Sign in
                 </span>
               </div>
@@ -214,7 +221,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
           {/* ========== STEP 3 : CONTACT INFORMATION ========== */}
           {step === 3 && (
             <div className="space-y-4">
-
               <div>
                 <label className="text-sm font-medium">Email Address</label>
                 <div className="relative mt-1">
@@ -242,7 +248,10 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                     }
                     className="w-full px-3 py-2 rounded-md input_border pr-10"
                   />
-                  <img src={contactIcon} className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5" />
+                  <img
+                    src={contactIcon}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5"
+                  />
                 </div>
               </div>
 
@@ -256,7 +265,10 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                     }
                     className="w-full px-3 py-2 rounded-md input_border pr-10"
                   />
-                  <img src={callIcon} className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5" />
+                  <img
+                    src={callIcon}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5"
+                  />
                 </div>
               </div>
 
@@ -270,7 +282,10 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                     }
                     className="w-full px-3 py-2 rounded-md input_border pr-10"
                   />
-                  <img src={locationTickIcon} className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5" />
+                  <img
+                    src={locationTickIcon}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5"
+                  />
                 </div>
               </div>
 
@@ -278,17 +293,13 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                 <input
                   placeholder="City"
                   value={form.city}
-                  onChange={(e) =>
-                    setForm({ ...form, city: e.target.value })
-                  }
+                  onChange={(e) => setForm({ ...form, city: e.target.value })}
                   className="w-1/2 px-3 py-2 rounded-md input_border"
                 />
                 <input
                   placeholder="State"
                   value={form.state}
-                  onChange={(e) =>
-                    setForm({ ...form, state: e.target.value })
-                  }
+                  onChange={(e) => setForm({ ...form, state: e.target.value })}
                   className="w-1/2 px-3 py-2 rounded-md input_border"
                 />
               </div>
@@ -353,9 +364,7 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
                 />
                 <img
                   src={eyeIcon}
-                  onClick={() =>
-                    setShowConfirmPassword(!showConfirmPassword)
-                  }
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 cursor-pointer"
                 />
               </div>
@@ -369,7 +378,6 @@ const SignUpModal = ({ open, onClose, onLoginClick }) => {
               </button>
             </div>
           )}
-
         </div>
       </div>
     </div>
