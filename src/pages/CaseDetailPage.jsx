@@ -47,12 +47,12 @@ const CaseDetailPage = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const openPdf = (url) => {
+  const downloadPdf = (url) => {
     if (!url) return;
     window.open(url, "_blank");
   };
 
-  const downloadPdf = (url) => {
+  const openPdf = (url) => {
     if (!url) return;
     const link = document.createElement("a");
     link.href = url;
@@ -61,6 +61,7 @@ const CaseDetailPage = () => {
     link.click();
     document.body.removeChild(link);
   };
+
 
   if (loading) {
     return <div className="text-center py-20">Loading...</div>;
