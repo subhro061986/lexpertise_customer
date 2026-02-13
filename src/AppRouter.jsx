@@ -23,7 +23,7 @@ const Navigation = ({ onLoginClick, onSignupClick }) => {
         <Route path="/details" Component={DetailsPage} />
         <Route path="/about" Component={AboutPage} />
         <Route path="/search-results" Component={SearchResultsPage} />
-        <Route path="/case/:id" Component={CaseDetailPage} />
+        <Route path="/case/:uuid" Component={CaseDetailPage} />
       </Routes>
     </Router>
   );

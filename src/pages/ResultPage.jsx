@@ -1,4 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { SearchContext } from "../context/SearchContext";
 import Footer from "../layout/Footer";
 import calendar_img from "../assets/calendar.png";
@@ -18,6 +19,7 @@ const ResultPage = () => {
 
   const [searchBy, setSearchBy] = useState(filters?.search_by || "keyword");
   const [keyword, setKeyword] = useState(filters?.keyword || "");
+  const navigate = useNavigate();
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -114,7 +116,7 @@ const ResultPage = () => {
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {results.map((item) => {
               const caseDetails =
                 typeof item.case_details === "string"
@@ -124,60 +126,50 @@ const ResultPage = () => {
               return (
                 <div
                   key={item.id}
-                  className="group bg-white dark:bg-[#1a2632] p-5 rounded-lg border border-[#dbe0e6] dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between h-full relative"
+                  onClick={() => navigate(`/case/${item.uuid}`)}
+                  className="group bg-white dark:bg-[#1a2632] p-5 rounded-lg border border-[#dbe0e6] dark:border-slate-700 shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between h-full relative cursor-pointer"
                 >
                   <div>
                     <div className="flex flex-col gap-2 mb-4 pr-14">
-                      <a
-                        className="text-lg font-bold text-primary hover:underline leading-snug block line-clamp-2"
-                        href="#"
-                      >
+                      <span className="text-lg font-bold text-primary leading-snug block line-clamp-2">
                         {caseDetails?.case_name || "Untitled Case"}
-                      </a>
+                      </span>
+
                       <span className="font-mono bg-slate-100 dark:bg-slate-800 w-fit px-2 py-0.5 rounded text-xs">
                         {caseDetails?.case_number || "N/A"}
                       </span>
+
                       <span className="font-mono bg-slate-100 dark:bg-slate-800 w-fit px-2 py-0.5 rounded text-xs">
                         {caseDetails?.neutral_citation || "N/A"}
                       </span>
                     </div>
 
-                    <div className="flex flex-col gap-2 text-sm text-[#617589] dark:text-slate-400 mb-6">
-                      <div className="flex items-center gap-2">
-                        <img src={calendar_img} alt="calendar" />
-                        {/* <span>
-                          {new Date(
-                            caseDetails?.order_or_judgement_date,
-                          ).toLocaleDateString()}
-                        </span> */}
-                        <span>
-                          {(() => {
-                            const rawDate =
-                              caseDetails?.order_or_judgement_date;
-                            if (!rawDate) return "N/A";
+                    <div className="flex items-center gap-2 text-sm text-[#617589] dark:text-slate-400">
+                      <img src={calendar_img} alt="calendar" />
+                      <span>
+                        {(() => {
+                          const rawDate = caseDetails?.order_or_judgement_date;
+                          if (!rawDate) return "N/A";
 
-                            // Remove ordinal suffix (st, nd, rd, th) and comma
-                            const cleanedDate = rawDate
-                              .replace(/(\d+)(st|nd|rd|th)/, "$1")
-                              .replace(",", "");
+                          const cleanedDate = rawDate
+                            .replace(/(\d+)(st|nd|rd|th)/, "$1")
+                            .replace(",", "");
 
-                            const parsedDate = new Date(cleanedDate);
+                          const parsedDate = new Date(cleanedDate);
+                          if (isNaN(parsedDate.getTime())) return "N/A";
 
-                            if (isNaN(parsedDate.getTime())) return "N/A";
+                          const day = String(parsedDate.getDate()).padStart(
+                            2,
+                            "0",
+                          );
+                          const month = String(
+                            parsedDate.getMonth() + 1,
+                          ).padStart(2, "0");
+                          const year = parsedDate.getFullYear();
 
-                            const day = String(parsedDate.getDate()).padStart(
-                              2,
-                              "0",
-                            );
-                            const month = String(
-                              parsedDate.getMonth() + 1,
-                            ).padStart(2, "0");
-                            const year = parsedDate.getFullYear();
-
-                            return `${day}/${month}/${year}`;
-                          })()}
-                        </span>
-                      </div>
+                          return `${day}/${month}/${year}`;
+                        })()}
+                      </span>
                     </div>
                   </div>
                 </div>
