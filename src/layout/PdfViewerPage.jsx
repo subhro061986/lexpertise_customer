@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Footer from "../layout/Footer";
 
@@ -9,13 +9,14 @@ const PdfViewerPage = () => {
   const navigate = useNavigate();
   const params = new URLSearchParams(location.search);
 
-  const rawSrc = params.get("src");
-  const allowDownload = params.get("download") === "true"; // Check if download is allowed
+  const fileId = params.get("file_id"); // Format "uuid:file_type"
+  const allowDownload = params.get("download") === "true";
+  const [loading, setLoading] = useState(false);
 
-  if (!rawSrc) {
+  if (!fileId) {
     return (
       <div className="text-center py-20">
-        <p className="text-red-500">Invalid PDF URL</p>
+        <p className="text-red-500">Invalid file ID</p>
         <button
           onClick={() => navigate(-1)}
           className="mt-4 px-4 py-2 bg-gray-200 rounded"
@@ -26,39 +27,41 @@ const PdfViewerPage = () => {
     );
   }
 
-  // Decode URL
-  const decodedSrc = decodeURIComponent(rawSrc);
+  // Parse file ID (format: "uuid:file_type")
+  const [uuid, fileType] = fileId.split(":");
 
-  // If already full URL, use it
-  const finalUrl = decodedSrc.startsWith("http")
-    ? decodedSrc
-    : `${API_BASE}${decodedSrc}`;
+  // Construct secure API URL - no path exposure
+  const finalUrl = `${API_BASE}/files/pdf/${uuid}/${fileType}`;
 
   // Add #toolbar=0 to disable PDF toolbar (reduces download options)
   const viewerUrl = `${finalUrl}#toolbar=0&navpanes=0`;
 
   // Direct download without opening (for Download button only)
   const downloadPdf = () => {
-    // Use fetch to download as blob, then trigger download
+    setLoading(true);
     fetch(finalUrl)
-      .then((response) => response.blob())
-      .then((blob) => {
-        // Create a temporary URL for the blob
+      .then((response) => {
+        // Extract real filename from Content-Disposition header
+        const disposition = response.headers.get("Content-Disposition");
+        const match = disposition?.match(/filename="?([^"]+)"?/);
+        const filename = match?.[1] ?? `document_${fileType}.pdf`;
+        return response.blob().then((blob) => ({ blob, filename }));
+      })
+      .then(({ blob, filename }) => {
         const blobUrl = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = blobUrl;
-        link.download = decodedSrc.split("/").pop() || "document.pdf"; // Extract filename from URL
+        link.download = filename;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
-        // Clean up the blob URL
         window.URL.revokeObjectURL(blobUrl);
       })
       .catch((err) => {
         console.error("Download failed:", err);
-        // Fallback: open in new tab
         window.open(finalUrl, "_blank");
-      });
+      })
+      .finally(() => setLoading(false));
   };
 
   return (
@@ -76,7 +79,8 @@ const PdfViewerPage = () => {
           {allowDownload && (
             <button
               onClick={downloadPdf}
-              className="px-6 py-3 rounded-full bg-yellow-500 text-white font-semibold flex items-center gap-2 hover:bg-yellow-600 transition"
+              disabled={loading}
+              className="px-6 py-3 rounded-full bg-yellow-500 text-white font-semibold flex items-center gap-2 hover:bg-yellow-600 transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <span>Download PDF</span>
               <svg
@@ -96,6 +100,7 @@ const PdfViewerPage = () => {
             </button>
           )}
         </div>
+
         {/* PDF Container with overlay to prevent right-click */}
         <div
           className="bg-white shadow-lg rounded-xl overflow-hidden max-w-6xl w-full relative"
@@ -118,9 +123,10 @@ const PdfViewerPage = () => {
             style={{ border: "none" }}
             onContextMenu={(e) => !allowDownload && e.preventDefault()}
           />
-        </div>{" "}
-        <div className="w-full max-w-6xl mb-4 rounded-lg p-3 text-center">
-          <p className="text-sm text-grey-800">
+        </div>
+
+        <div className="w-full max-w-6xl mt-4 rounded-lg p-3 text-center">
+          <p className="text-sm text-gray-800">
             This document is view-only and cannot be downloaded
           </p>
         </div>

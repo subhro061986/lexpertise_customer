@@ -46,43 +46,48 @@ const CaseDetailPage = () => {
     return `${day}/${month}/${year}`;
   };
 
-  const API_BASE = "http://localhost:8000";
-
-  // Open PDF in viewer page (for View buttons)
-  const openPdf = (url, allowDownload = false) => {
-    if (!url) return;
+  // Open PDF in viewer page using secure file ID
+  const openPdf = (fileId, allowDownload = false) => {
+    if (!fileId) return;
     
-    // Just pass the raw URL - let the viewer handle encoding
+    // fileId is in format "uuid:file_type" — encode each part separately
+    // to avoid the colon being encoded to %3A, which breaks split(":") in the viewer
+    const [docUuid, fileType] = fileId.split(":");
+    const safeFileId = `${encodeURIComponent(docUuid)}:${encodeURIComponent(fileType)}`;
     const downloadParam = allowDownload ? "&download=true" : "";
-    navigate(`/pdf-viewer?src=${encodeURIComponent(url)}${downloadParam}`);
+    navigate(`/pdf-viewer?file_id=${safeFileId}${downloadParam}`);
   };
 
-  // Direct download without opening (for Download button only)
-  const downloadPdf = (url) => {
-    if (!url) return;
+  // Direct download for main judgment
+  const downloadPdf = async (fileId) => {
+    if (!fileId) return;
 
-    const finalUrl = url.startsWith("http") ? url : `${API_BASE}${url}`;
+    try {
+      // Parse file ID
+      const [docUuid, fileType] = fileId.split(":");
+      const downloadUrl = `http://localhost:8000/files/pdf/${docUuid}/${fileType}`;
 
-    // Use fetch to download as blob, then trigger download
-    fetch(finalUrl)
-      .then(response => response.blob())
-      .then(blob => {
-        // Create a temporary URL for the blob
-        const blobUrl = window.URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = blobUrl;
-        link.download = url.split('/').pop() || "document.pdf"; // Extract filename from URL
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        // Clean up the blob URL
-        window.URL.revokeObjectURL(blobUrl);
-      })
-      .catch(err => {
-        console.error("Download failed:", err);
-        // Fallback: open in new tab
-        window.open(finalUrl, '_blank');
-      });
+      // Fetch and download
+      const response = await fetch(downloadUrl);
+      const blob = await response.blob();
+
+      // Extract real filename from Content-Disposition header
+      const disposition = response.headers.get("Content-Disposition");
+      const match = disposition?.match(/filename="?([^"]+)"?/);
+      const filename = match?.[1] ?? `document_${fileType}.pdf`;
+
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("Download failed:", err);
+      alert("Download failed. Please try again.");
+    }
   };
 
   if (loading) {
@@ -130,7 +135,7 @@ const CaseDetailPage = () => {
             </span>
           </div>
 
-          {/* Main PDF Buttons */}
+          {/* Main PDF Buttons - Only "main" is downloadable */}
           <div className="flex gap-6 mt-8 items-center justify-center">
             <button
               onClick={() => openPdf(caseData.pdf_links?.main, true)}
@@ -150,7 +155,7 @@ const CaseDetailPage = () => {
 
           <hr className="my-8" />
 
-          {/* Other 6 PDFs (View Only) */}
+          {/* Other 6 PDFs (View Only - Not Downloadable) */}
           <div className="grid grid-cols-3 gap-6 text-center">
             {[
               { label: "Headnotes", key: "headnotes" },
