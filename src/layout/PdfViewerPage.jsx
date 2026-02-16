@@ -41,23 +41,23 @@ const PdfViewerPage = () => {
   const downloadPdf = () => {
     // Use fetch to download as blob, then trigger download
     fetch(finalUrl)
-      .then(response => response.blob())
-      .then(blob => {
+      .then((response) => response.blob())
+      .then((blob) => {
         // Create a temporary URL for the blob
         const blobUrl = window.URL.createObjectURL(blob);
         const link = document.createElement("a");
         link.href = blobUrl;
-        link.download = decodedSrc.split('/').pop() || "document.pdf"; // Extract filename from URL
+        link.download = decodedSrc.split("/").pop() || "document.pdf"; // Extract filename from URL
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         // Clean up the blob URL
         window.URL.revokeObjectURL(blobUrl);
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Download failed:", err);
         // Fallback: open in new tab
-        window.open(finalUrl, '_blank');
+        window.open(finalUrl, "_blank");
       });
   };
 
@@ -79,42 +79,53 @@ const PdfViewerPage = () => {
               className="px-6 py-3 rounded-full bg-yellow-500 text-white font-semibold flex items-center gap-2 hover:bg-yellow-600 transition"
             >
               <span>Download PDF</span>
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-4 w-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"
+                />
               </svg>
             </button>
           )}
         </div>
-
-        {!allowDownload && (
-          <div className="w-full max-w-6xl mb-4 rounded-lg p-3 text-center">
-            <p className="text-sm text-red-800">
-              This document is view-only and cannot be downloaded
-            </p>
-          </div>
-        )}
-
         {/* PDF Container with overlay to prevent right-click */}
-        <div className="bg-white shadow-lg rounded-xl overflow-hidden max-w-6xl w-full relative" style={{ height: 'calc(100vh - 240px)' }}>
+        <div
+          className="bg-white shadow-lg rounded-xl overflow-hidden max-w-6xl w-full relative"
+          style={{ height: "calc(100vh - 240px)" }}
+        >
           {!allowDownload && (
-            <div 
+            <div
               className="absolute inset-0 z-10 pointer-events-none"
-              style={{ 
-                background: 'transparent',
+              style={{
+                background: "transparent",
               }}
               onContextMenu={(e) => e.preventDefault()}
             />
           )}
-          
+
           <iframe
             src={viewerUrl}
             className="w-full h-full"
             title="PDF Viewer"
-            style={{ border: 'none' }}
+            style={{ border: "none" }}
             onContextMenu={(e) => !allowDownload && e.preventDefault()}
           />
+        </div>{" "}
+        <div className="w-full max-w-6xl mb-4 rounded-lg p-3 text-center">
+          <p className="text-sm text-grey-800">
+            This document is view-only and cannot be downloaded
+          </p>
         </div>
       </main>
+
       <Footer />
     </>
   );
