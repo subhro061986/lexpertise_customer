@@ -12,6 +12,8 @@ const ResultPage = () => {
     page,
     limit,
     executeSearch,
+    refineSearch,
+    hasCacheKey,
     loading,
     searchMode,
     filters,
@@ -20,34 +22,41 @@ const ResultPage = () => {
 
   const [searchBy, setSearchBy] = useState(filters?.search_by || "keyword");
   const [keyword, setKeyword] = useState(filters?.keyword || "");
-  const [showRefine, setShowRefine] = useState(false); // collapsed by default
+  const [showRefine, setShowRefine] = useState(false);
+  const [isRefineMode, setIsRefineMode] = useState(false);
+
   const navigate = useNavigate();
 
+  // ── Initial load ─────────────────────────────────────────────────
   useEffect(() => {
     window.scrollTo(0, 0);
+    setIsRefineMode(false);
     executeSearch(1);
   }, []);
 
   const totalPages = Math.ceil((total || 0) / (limit || 10));
 
+  // ── Apply refine filter (from Redis cache) ───────────────────────
   const handleRefine = () => {
-    const trimmedKeyword =
-      keyword && keyword.trim() !== "" ? keyword.trim() : null;
+    setIsRefineMode(true);
+    refineSearch(keyword.trim() || null, searchBy, 1);
+  };
 
-    const updatedFilters = {
-      ...filters, // keep all existing filters
-    };
+  // ── Reset back to original results ───────────────────────────────
+  const handleReset = () => {
+    setKeyword("");
+    setSearchBy("keyword");
+    setIsRefineMode(false);
+    executeSearch(1);
+  };
 
-    if (searchMode === "basic") {
-      updatedFilters.search_by = searchBy;
-      updatedFilters.keyword = trimmedKeyword;
+  // ── Pagination ───────────────────────────────────────────────────
+  const handlePageChange = (targetPage) => {
+    if (isRefineMode) {
+      refineSearch(keyword.trim() || null, searchBy, targetPage);
     } else {
-      updatedFilters.keyword = trimmedKeyword;
+      executeSearch(targetPage);
     }
-
-    setFilters(updatedFilters);
-
-    executeSearch(1, updatedFilters);
   };
 
   return (
@@ -72,11 +81,25 @@ const ResultPage = () => {
                 <div className="flex items-center justify-between border-b pb-4 mb-4">
                   <h3 className="font-bold text-lg">Refine Search</h3>
                   <button
-                    onClick={() => executeSearch(1)}
+                    onClick={handleReset}
                     className="text-sm text-primary font-medium hover:underline"
                   >
                     Reset All
                   </button>
+                </div>
+
+                {/* Cache status indicator */}
+                <div className="mb-4 flex items-center gap-2">
+                  <span
+                    className={`inline-block w-2 h-2 rounded-full ${
+                      hasCacheKey() ? "bg-green-400" : "bg-gray-300"
+                    }`}
+                  />
+                  <span className="text-xs text-gray-500">
+                    {hasCacheKey()
+                      ? "Ready to filter from cache"
+                      : "Loading cache…"}
+                  </span>
                 </div>
 
                 {searchMode === "basic" && (
@@ -100,17 +123,26 @@ const ResultPage = () => {
                   <input
                     value={keyword}
                     onChange={(e) => setKeyword(e.target.value)}
+                    onKeyDown={(e) => e.key === "Enter" && handleRefine()}
                     className="w-full h-11 px-4 rounded-lg input_border text-sm"
                     type="text"
+                    placeholder="Type to filter…"
                   />
                 </div>
 
                 <button
                   onClick={handleRefine}
-                  className="w-full py-2.5 rounded-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold transition"
+                  disabled={!hasCacheKey() || loading}
+                  className="w-full py-2.5 rounded-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Apply Filters
+                  {loading ? "Filtering…" : "Apply Filters"}
                 </button>
+
+                {isRefineMode && (
+                  <p className="text-xs text-center text-gray-400 mt-3">
+                    Filtered from cache · no database query used
+                  </p>
+                )}
               </div>
             </aside>
           )}
@@ -118,7 +150,14 @@ const ResultPage = () => {
           {/* Results Section */}
           <div className="flex-1 min-w-0">
             <div className="mb-6">
-              <h2 className="text-2xl font-bold">{total || 0} Results found</h2>
+              <h2 className="text-2xl font-bold">
+                {total || 0} Results found
+                {isRefineMode && (
+                  <span className="ml-2 text-sm font-normal text-yellow-600 bg-yellow-50 px-2 py-1 rounded-full">
+                    filtered
+                  </span>
+                )}
+              </h2>
               <p className="text-sm text-slate-500 mt-1">
                 Showing page {page} of {totalPages || 1}
               </p>
@@ -126,17 +165,25 @@ const ResultPage = () => {
 
             {loading && results.length === 0 && (
               <div className="text-center py-10 text-gray-500">
-                Loading results...
+                Loading results…
               </div>
             )}
 
-            {/* Correct Dynamic Grid */}
+            {!loading && results.length === 0 && (
+              <div className="text-center py-20 text-gray-400">
+                <p className="text-lg font-medium">No results yet</p>
+                <p className="text-sm mt-1">
+                  Use the filters to search for cases
+                </p>
+              </div>
+            )}
+
             <div
               className={`grid gap-6
-          grid-cols-1
-          sm:grid-cols-2
-          ${showRefine ? "lg:grid-cols-3" : "lg:grid-cols-4"}
-        `}
+                grid-cols-1
+                sm:grid-cols-2
+                ${showRefine ? "lg:grid-cols-3" : "lg:grid-cols-4"}
+              `}
             >
               {results.map((item) => {
                 const caseDetails =
@@ -163,14 +210,8 @@ const ResultPage = () => {
                     </span>
 
                     <div className="flex items-center gap-2 text-sm text-slate-500 mt-auto">
-                      <img
-                        src={calendar_img}
-                        alt="calendar"
-                        className="w-4 h-4"
-                      />
-                      <span>
-                        {caseDetails?.order_or_judgement_date || "N/A"}
-                      </span>
+                      <img src={calendar_img} alt="calendar" className="w-4 h-4" />
+                      <span>{caseDetails?.order_or_judgement_date || "N/A"}</span>
                     </div>
                   </div>
                 );
@@ -178,28 +219,27 @@ const ResultPage = () => {
             </div>
           </div>
         </div>
+
         {/* Pagination */}
         {totalPages > 1 && (
           <div className="flex flex-col sm:flex-row items-center justify-between border-t border-[#dbe0e6] dark:border-slate-700 pt-6 mt-10 gap-4">
-            {/* Previous */}
             <button
               disabled={page <= 1 || loading}
-              onClick={() => executeSearch(page - 1)}
+              onClick={() => handlePageChange(page - 1)}
               className="px-4 py-2 text-sm font-medium text-[#617589] hover:text-[#111418] dark:hover:text-white transition disabled:opacity-50"
             >
               Previous
             </button>
 
-            {/* Page Numbers */}
             <div className="flex items-center gap-2 flex-wrap justify-center">
               {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
                 <button
                   key={p}
-                  onClick={() => executeSearch(p)}
+                  onClick={() => handlePageChange(p)}
                   className={`h-9 w-9 flex items-center justify-center rounded-lg text-sm font-medium transition ${
                     p === page
                       ? "bg-yellow-500 text-white"
-                      : "text-[#617589] hover:bg-slate-100 dark:hover:bg-slate-800 "
+                      : "text-[#617589] hover:bg-slate-100 dark:hover:bg-slate-800"
                   }`}
                 >
                   {p}
@@ -207,10 +247,9 @@ const ResultPage = () => {
               ))}
             </div>
 
-            {/* Next */}
             <button
               disabled={page >= totalPages || loading}
-              onClick={() => executeSearch(page + 1)}
+              onClick={() => handlePageChange(page + 1)}
               className="px-4 py-2 text-sm font-medium text-[#617589] hover:text-[#111418] dark:hover:text-white transition disabled:opacity-50"
             >
               Next
