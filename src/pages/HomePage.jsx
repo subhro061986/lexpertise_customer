@@ -125,7 +125,7 @@ const HomePage = () => {
                 <select
                   value={categoryId}
                   onChange={(e) => setCategoryId(e.target.value)}
-                  className="form-select block w-full py-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg"
+                  className="form-select block w-full p-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg"
                 >
                   <option value="">All Categories</option>
                   <option value="1">1</option>
@@ -146,7 +146,7 @@ const HomePage = () => {
                   <select
                     value={year}
                     onChange={(e) => setYear(e.target.value)}
-                    className="form-select w-full py-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg sm:text-sm dark:text-white shadow-sm"
+                    className="form-select w-full p-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg sm:text-sm dark:text-white shadow-sm"
                   >
                     <option value="">All</option>
                     {Array.from({ length: 7 }, (_, i) => {
@@ -166,7 +166,7 @@ const HomePage = () => {
                   <select
                     value={month}
                     onChange={(e) => setMonth(e.target.value)}
-                    className="form-select w-full py-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg sm:text-sm dark:text-white shadow-sm"
+                    className="form-select w-full p-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg sm:text-sm dark:text-white shadow-sm"
                   >
                     <option value="">All</option>
                     <option value="1">January</option>
@@ -194,7 +194,7 @@ const HomePage = () => {
                   <select
                     value={searchBy}
                     onChange={(e) => setSearchBy(e.target.value)}
-                    className="form-select block w-full py-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg"
+                    className="form-select block w-full p-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg"
                   >
                     <option value="keyword">Keyword</option>
                     <option value="case_no">Case Number</option>
