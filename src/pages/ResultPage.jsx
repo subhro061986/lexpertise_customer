@@ -89,7 +89,7 @@ const ResultPage = () => {
                 </div>
 
                 {/* Cache status indicator */}
-                <div className="mb-4 flex items-center gap-2">
+                {/* <div className="mb-4 flex items-center gap-2">
                   <span
                     className={`inline-block w-2 h-2 rounded-full ${
                       hasCacheKey() ? "bg-green-400" : "bg-gray-300"
@@ -100,7 +100,7 @@ const ResultPage = () => {
                       ? "Ready to filter from cache"
                       : "Loading cache…"}
                   </span>
-                </div>
+                </div> */}
 
                 {searchMode === "basic" && (
                   <div className="flex flex-col gap-2 mb-4">
@@ -138,11 +138,13 @@ const ResultPage = () => {
                   {loading ? "Filtering…" : "Apply Filters"}
                 </button>
 
-                {isRefineMode && (
-                  <p className="text-xs text-center text-gray-400 mt-3">
-                    Filtered from cache · no database query used
-                  </p>
-                )}
+                {isRefineMode
+                //  && (
+                //   <p className="text-xs text-center text-gray-400 mt-3">
+                //     Filtered from cache · no database query used
+                //   </p>
+                // )
+                }
               </div>
             </aside>
           )}
