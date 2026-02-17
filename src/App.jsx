@@ -7,17 +7,18 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import { SearchProvider } from "./context/SearchContext";
 
 function AppContent() {
-  const { loginModalOpen, openLoginModal, closeLoginModal } = useAuth();
+  // LoginModal is fully controlled by AuthContext so forceLogout()
+  // can open it with a message from anywhere in the app
+  const { loginModalOpen, closeLoginModal, openLoginModal } = useAuth();
   const [signupOpen, setSignupOpen] = useState(false);
 
-  const openSignup = () => { closeLoginModal(); setSignupOpen(true); };
-  const openLogin  = () => { setSignupOpen(false); openLoginModal();  };
+  const openLogin  = () => { setSignupOpen(false); openLoginModal();   };
+  const openSignup = () => { closeLoginModal();     setSignupOpen(true); };
 
   return (
     <>
       <Navigation onLoginClick={openLogin} onSignupClick={openSignup} />
 
-      {/* LoginModal state is owned by AuthContext — opens automatically on 401 or PrivateRoute */}
       <LoginModal
         open={loginModalOpen}
         onClose={closeLoginModal}
