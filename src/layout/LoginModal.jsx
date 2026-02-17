@@ -7,7 +7,9 @@ import { useAuth } from "../context/AuthContext";
 
 /* global google */
 
+// ─── Paste your Google Client ID here ────────────────────────────────────────
 const GOOGLE_CLIENT_ID = "693926858933-lgct9tuenmd8ai182lijskk3cifbbucn.apps.googleusercontent.com";
+// ─────────────────────────────────────────────────────────────────────────────
 
 function loadGsiScript() {
   return new Promise((resolve, reject) => {
@@ -33,7 +35,7 @@ function loadGsiScript() {
 }
 
 const LoginModal = ({ open, onClose, onSignupClick }) => {
-  const { login, googleLogin, loading, loginModalMessage } = useAuth();
+  const { login, googleLogin, loading } = useAuth();
 
   const [email, setEmail]       = useState("");
   const [password, setPassword] = useState("");
@@ -43,7 +45,6 @@ const LoginModal = ({ open, onClose, onSignupClick }) => {
   const [gsiError, setGsiError] = useState(false);
   const googleBtnRef = useRef(null);
 
-  // Reset form fields when modal opens normally (not when opened by forceLogout)
   useEffect(() => {
     if (open) {
       setEmail("");
@@ -53,7 +54,6 @@ const LoginModal = ({ open, onClose, onSignupClick }) => {
     }
   }, [open]);
 
-  // Load GSI script when modal opens
   useEffect(() => {
     if (!open) return;
     loadGsiScript()
@@ -61,18 +61,21 @@ const LoginModal = ({ open, onClose, onSignupClick }) => {
       .catch(() => setGsiError(true));
   }, [open]);
 
-  // Render Google button once SDK is ready
   useEffect(() => {
     if (!gsiReady || !open || !googleBtnRef.current) return;
+
     if (!GOOGLE_CLIENT_ID || GOOGLE_CLIENT_ID.includes("YOUR_CLIENT_ID")) {
+      console.error("Replace GOOGLE_CLIENT_ID in LoginModal.jsx with your actual client ID");
       setGsiError(true);
       return;
     }
+
     try {
       google.accounts.id.initialize({
         client_id: GOOGLE_CLIENT_ID,
         callback: handleGoogleResponse,
       });
+
       google.accounts.id.renderButton(googleBtnRef.current, {
         theme: "outline",
         size: "large",
@@ -80,6 +83,7 @@ const LoginModal = ({ open, onClose, onSignupClick }) => {
         text: "continue_with",
       });
     } catch (err) {
+      console.error("[GSI] renderButton failed:", err);
       setGsiError(true);
     }
   }, [gsiReady, open]);
@@ -129,22 +133,11 @@ const LoginModal = ({ open, onClose, onSignupClick }) => {
         {/* Body */}
         <div className="px-6 pb-6">
 
-          {/* ── Session invalidation warning (from another device login) ── */}
-          {loginModalMessage && (
-            <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-3 mb-4">
-              <svg className="w-4 h-4 text-red-500 mt-0.5 shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm-.75-11.25a.75.75 0 011.5 0v4.5a.75.75 0 01-1.5 0v-4.5zm.75 7.5a.75.75 0 100-1.5.75.75 0 000 1.5z" clipRule="evenodd" />
-              </svg>
-              <p className="text-red-600 text-sm font-medium">{loginModalMessage}</p>
-            </div>
-          )}
-
-          {/* ── Form error (wrong password etc.) ── */}
           {error && (
             <p className="text-red-600 text-sm mb-4 whitespace-pre-line">{error}</p>
           )}
 
-          {/* Google button */}
+          {/* Google button container */}
           {!gsiError ? (
             <div ref={googleBtnRef} className="w-full mb-2 min-h-[44px] flex items-center justify-center">
               {!gsiReady && (
@@ -155,7 +148,9 @@ const LoginModal = ({ open, onClose, onSignupClick }) => {
               )}
             </div>
           ) : (
-            <p className="text-xs text-center text-gray-400 mb-2">Google Sign-In unavailable</p>
+            <p className="text-xs text-center text-gray-400 mb-2">
+              Google Sign-In unavailable
+            </p>
           )}
 
           <div className="flex items-center my-4">
