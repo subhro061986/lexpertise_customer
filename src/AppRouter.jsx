@@ -8,6 +8,7 @@ import AboutPage from "./pages/AboutUsPage";
 import SearchResultsPage from "./pages/ResultPage";
 import CaseDetailPage from "./pages/CaseDetailPage";
 import PdfViewerPage from "./layout/PdfViewerPage";
+import PrivateRoute from "./layout/PrivateRoute";
 
 const Navigation = ({ onLoginClick, onSignupClick }) => {
   return (
@@ -15,14 +16,23 @@ const Navigation = ({ onLoginClick, onSignupClick }) => {
       <TopMenu onLoginClick={onLoginClick} onSignupClick={onSignupClick} />
 
       <Routes>
-        <Route path="/" Component={HomePage} />
-        <Route path="/pricing" Component={PricingPage} />
-        <Route path="/result" Component={ResultPage} />
-        <Route path="/details" Component={DetailsPage} />
-        <Route path="/about" Component={AboutPage} />
+        <Route path="/"               Component={HomePage} />
+        <Route path="/pricing"        Component={PricingPage} />
+        <Route path="/result"         Component={ResultPage} />
+        <Route path="/details"        Component={DetailsPage} />
+        <Route path="/about"          Component={AboutPage} />
         <Route path="/search-results" Component={SearchResultsPage} />
-        <Route path="/case/:uuid" Component={CaseDetailPage} />
-        <Route path="/pdf-viewer" element={<PdfViewerPage />} />
+        <Route path="/case/:uuid"     Component={CaseDetailPage} />
+
+        {/* Private — must be logged in */}
+        <Route
+          path="/pdf-viewer"
+          element={
+            <PrivateRoute>
+              <PdfViewerPage />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </Router>
   );

@@ -3,63 +3,43 @@ import "./App.css";
 import Navigation from "./AppRouter";
 import LoginModal from "./layout/LoginModal";
 import SignUpModal from "./layout/SignupModal";
-
-// temporary
-// import DisclaimerModal from "./layout/DisclaimerModal";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import { SearchProvider } from "./context/SearchContext";
-// import { UserProvider } from "./context/UserContext";
 
-function App() {
-  const [loginOpen, setLoginOpen] = useState(false);
+function AppContent() {
+  const { loginModalOpen, openLoginModal, closeLoginModal } = useAuth();
   const [signupOpen, setSignupOpen] = useState(false);
-  const [showDisclaimer, setShowDisclaimer] = useState(true);
+
+  const openSignup = () => { closeLoginModal(); setSignupOpen(true); };
+  const openLogin  = () => { setSignupOpen(false); openLoginModal();  };
 
   return (
     <>
-    <AuthProvider>
-      <SearchProvider>
-      {/* <UserProvider> */}
-      <Navigation
-        onLoginClick={() => {
-          setSignupOpen(false);
-          setLoginOpen(true);
-        }}
-        onSignupClick={() => {
-          setLoginOpen(false);
-          setSignupOpen(true);
-        }}
-      />
+      <Navigation onLoginClick={openLogin} onSignupClick={openSignup} />
 
+      {/* LoginModal state is owned by AuthContext — opens automatically on 401 or PrivateRoute */}
       <LoginModal
-        open={loginOpen}
-        onClose={() => setLoginOpen(false)}
-        onSignupClick={() => {
-          setLoginOpen(false);
-          setSignupOpen(true);
-        }}
+        open={loginModalOpen}
+        onClose={closeLoginModal}
+        onSignupClick={openSignup}
       />
 
       <SignUpModal
         open={signupOpen}
         onClose={() => setSignupOpen(false)}
-        onLoginClick={() => {
-          setSignupOpen(false);
-          setLoginOpen(true);
-        }}
+        onLoginClick={openLogin}
       />
-
-      {/* <DisclaimerModal
-        open={showDisclaimer}
-        onClose={() => setShowDisclaimer(false)}
-        onAgree={() => {
-          setShowDisclaimer(false);
-        }}
-      /> */}
-      {/* </UserProvider> */}
-      </SearchProvider>
-      </AuthProvider>
     </>
+  );
+}
+
+function App() {
+  return (
+    <AuthProvider>
+      <SearchProvider>
+        <AppContent />
+      </SearchProvider>
+    </AuthProvider>
   );
 }
 
