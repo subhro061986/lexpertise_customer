@@ -1,10 +1,8 @@
-import React, { createContext, useContext, useState, useCallback, useEffect, useRef } from "react";
+import React, { createContext, useContext, useState, useCallback, useEffect } from "react";
 import axios from "axios";
 import Config from "../config/config.json";
 
 const AuthContext = createContext();
-
-const POLL_INTERVAL_MS = 1_000; // check every 1 second
 
 function persistSession(token, user) {
   localStorage.setItem("access_token", token);
@@ -17,9 +15,9 @@ function clearSession() {
 }
 
 const AuthProvider = ({ children }) => {
-  const [loading, setLoading]           = useState(false);
+  const [loading, setLoading]               = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
-  const pollRef = useRef(null);
+  const [loginModalMessage, setLoginModalMessage] = useState(""); // red warning message
 
   const [currentUser, setCurrentUser] = useState(() => {
     try {
@@ -33,57 +31,23 @@ const AuthProvider = ({ children }) => {
   const isAuthenticated = Boolean(currentUser);
 
   // ── Modal controls ─────────────────────────────────────────────────────
-  const openLoginModal  = useCallback(() => setLoginModalOpen(true),  []);
-  const closeLoginModal = useCallback(() => setLoginModalOpen(false), []);
-
-  // ── Force logout helper (used by poller + interceptor) ─────────────────
-  const forceLogout = useCallback(() => {
-    clearSession();
-    setCurrentUser(null);
+  const openLoginModal  = useCallback(() => {
+    setLoginModalMessage("");
     setLoginModalOpen(true);
   }, []);
 
-  // ── Session poller ─────────────────────────────────────────────────────
-  // Starts when user logs in, stops when user logs out.
-  // Hits GET /auth/verify-session every 30s with the stored token.
-  // If the server returns 401 (another device logged in), force logout.
-  useEffect(() => {
-    if (!isAuthenticated) {
-      // Clear any running poller when logged out
-      if (pollRef.current) {
-        clearInterval(pollRef.current);
-        pollRef.current = null;
-      }
-      return;
-    }
+  const closeLoginModal = useCallback(() => {
+    setLoginModalMessage("");
+    setLoginModalOpen(false);
+  }, []);
 
-    const checkSession = async () => {
-      const token = localStorage.getItem("access_token");
-      if (!token) return;
-
-      try {
-        await axios.get(Config.API_URL + "/auth/verify-session", {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        // 200 → session still valid, do nothing
-      } catch (err) {
-        if (err.response?.status === 401) {
-          // Another device has logged in — kick this one out
-          forceLogout();
-        }
-        // Other errors (network timeout etc.) — silently ignore, try again next tick
-      }
-    };
-
-    // Run once immediately when user logs in, then on interval
-    checkSession();
-    pollRef.current = setInterval(checkSession, POLL_INTERVAL_MS);
-
-    return () => {
-      clearInterval(pollRef.current);
-      pollRef.current = null;
-    };
-  }, [isAuthenticated, forceLogout]);
+  // ── Force logout with a warning message ────────────────────────────────
+  const forceLogout = useCallback((message = "") => {
+    clearSession();
+    setCurrentUser(null);
+    setLoginModalMessage(message);
+    setLoginModalOpen(true);
+  }, []);
 
   // ── Attach token to every axios request ───────────────────────────────
   useEffect(() => {
@@ -95,13 +59,13 @@ const AuthProvider = ({ children }) => {
     return () => axios.interceptors.request.eject(req);
   }, []);
 
-  // ── Global 401 interceptor (catches any other API call) ───────────────
+  // ── Global 401 handler ─────────────────────────────────────────────────
   useEffect(() => {
     const res = axios.interceptors.response.use(
       (response) => response,
       (error) => {
         if (error.response?.status === 401 && currentUser) {
-          forceLogout();
+          forceLogout("You've been logged out because your account was signed in on another device.");
         }
         return Promise.reject(error);
       }
@@ -159,6 +123,7 @@ const AuthProvider = ({ children }) => {
       persistSession(access_token, user);
       setCurrentUser(user);
       setLoginModalOpen(false);
+      setLoginModalMessage("");
       return user;
     } catch (err) {
       throw new Error(err.response?.data?.detail || "Login failed");
@@ -176,6 +141,7 @@ const AuthProvider = ({ children }) => {
       persistSession(access_token, user);
       setCurrentUser(user);
       setLoginModalOpen(false);
+      setLoginModalMessage("");
       return user;
     } catch (err) {
       throw new Error(err.response?.data?.detail || "Google login failed");
@@ -195,7 +161,8 @@ const AuthProvider = ({ children }) => {
       sendOtp, verifyOtp, createAccount,
       login, googleLogin, logout,
       loading, currentUser, isAuthenticated,
-      loginModalOpen, openLoginModal, closeLoginModal,
+      loginModalOpen, loginModalMessage,
+      openLoginModal, closeLoginModal,
     }}>
       {children}
     </AuthContext.Provider>
