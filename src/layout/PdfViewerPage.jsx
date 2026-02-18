@@ -2,8 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Footer from "../layout/Footer";
 import { useAuth } from "../context/AuthContext";
-
-const API_BASE = "http://localhost:8000";
+import { API_URL } from "../config/config.json";
 
 const PdfViewerPage = () => {
   const location  = useLocation();
@@ -41,7 +40,7 @@ const PdfViewerPage = () => {
     if (!fileId) return;
 
     const [uuid, fileType] = fileId.split(":");
-    const apiUrl = `${API_BASE}/files/pdf/${uuid}/${fileType}`;
+    const apiUrl = `${API_URL}/files/pdf/${uuid}/${fileType}`;
 
     fetchPdf(apiUrl)
       .then((blob) => {

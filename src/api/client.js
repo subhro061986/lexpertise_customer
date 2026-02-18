@@ -1,4 +1,6 @@
-const API_BASE_URL = "http://127.0.0.1:8000";
+import {API_URL} from '../config/config.json';
+
+const API_BASE_URL = API_URL;
 
 export async function apiRequest(path, options = {}) {
   // Attach JWT token if available

@@ -6,6 +6,7 @@ import court_icon from "../assets/bank.png";
 import file_icon from "../assets/pdf_icon.png";
 import download_icon from "../assets/import.png";
 import { useAuth } from "../context/AuthContext";
+import { API_URL } from "../config/config.json";
 
 const CaseDetailPage = () => {
   const { uuid } = useParams();
@@ -19,7 +20,7 @@ const CaseDetailPage = () => {
 
     const fetchCase = async () => {
       try {
-        const res = await fetch(`http://localhost:8000/documents/${uuid}`);
+        const res = await fetch(`${API_URL}/documents/${uuid}`);
         const data = await res.json();
         setCaseData(data);
       } catch (err) {
@@ -60,7 +61,7 @@ const CaseDetailPage = () => {
 
     try {
       const [docUuid, fileType] = fileId.split(":");
-      const downloadUrl = `http://localhost:8000/files/pdf/${docUuid}/${fileType}`;
+      const downloadUrl = `${API_URL}/files/pdf/${docUuid}/${fileType}`;
       const token = localStorage.getItem("access_token");
 
       const response = await fetch(downloadUrl, {
