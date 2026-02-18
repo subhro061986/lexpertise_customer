@@ -1,0 +1,22 @@
+import { apiRequest } from "./client";
+
+export function createAccount(payload) {
+  return apiRequest("/users/create-account", {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+}
+
+export function loginUser(email, password) {
+  return apiRequest("/users/login", {
+    method: "POST",
+    body: JSON.stringify({ email, password }),
+  });
+}
+
+export function googleLogin(idToken) {
+  return apiRequest("/users/google-login", {
+    method: "POST",
+    body: JSON.stringify({ id_token: idToken }),
+  });
+}

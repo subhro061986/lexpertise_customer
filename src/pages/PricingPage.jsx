@@ -20,7 +20,7 @@ const PricingPage = () => {
       <>
 
       {/* Top Menu */}
-      <TopMenu/>
+      {/* <TopMenu/> */}
         <main className="flex-grow">
           <div className="layout-container flex flex-col items-center py-10 px-4 md:px-10">
             <div className="flex flex-col items-center max-w-[800px] text-center mb-8 gap-4">
