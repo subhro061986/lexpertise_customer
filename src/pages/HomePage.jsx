@@ -14,47 +14,47 @@ const HomePage = () => {
   const { setSearchMode, setFilters } = useContext(SearchContext);
 
   // const [showDisclaimer, setShowDisclaimer] = useState(true);
-  const [searchBy, setSearchBy] = useState("keyword");
-  const [isAdvanced, setIsAdvanced] = useState(false);
+  // const [searchBy, setSearchBy] = useState("keyword");
+  // const [isAdvanced, setIsAdvanced] = useState(false);
 
-  const [categoryId, setCategoryId] = useState("");
-  const [year, setYear] = useState("");
-  const [month, setMonth] = useState("");
-  const [keyword, setKeyword] = useState("");
+  // const [categoryId, setCategoryId] = useState("");
+  // const [year, setYear] = useState("");
+  // const [month, setMonth] = useState("");
+  // const [keyword, setKeyword] = useState("");
 
-  const getPlaceholder = () => {
-    switch (searchBy) {
-      case "case_no":
-        return "Enter Case Number";
-      case "case_name":
-        return "Enter Case Name";
-      case "party_name":
-        return "Enter Party Name";
-      case "judge":
-        return "Enter Judge Name";
-      case "legislation":
-        return "Enter Legislation";
-      default:
-        return "Enter Keyword";
-    }
-  };
+  // const getPlaceholder = () => {
+  //   switch (searchBy) {
+  //     case "case_no":
+  //       return "Enter Case Number";
+  //     case "case_name":
+  //       return "Enter Case Name";
+  //     case "party_name":
+  //       return "Enter Party Name";
+  //     case "judge":
+  //       return "Enter Judge Name";
+  //     case "legislation":
+  //       return "Enter Legislation";
+  //     default:
+  //       return "Enter Keyword";
+  //   }
+  // };
 
-  const handleSearch = () => {
-    const trimmedKeyword =
-      keyword && keyword.trim() !== "" ? keyword.trim() : null;
+  // const handleSearch = () => {
+  //   const trimmedKeyword =
+  //     keyword && keyword.trim() !== "" ? keyword.trim() : null;
 
-    setSearchMode(isAdvanced ? "advanced" : "basic");
+  //   setSearchMode(isAdvanced ? "advanced" : "basic");
 
-    setFilters({
-      category_id: categoryId ? Number(categoryId) : null,
-      year: year ? Number(year) : null,
-      month: month ? Number(month) : null,
-      keyword: trimmedKeyword,
-      search_by: isAdvanced ? null : searchBy,
-    });
+  //   setFilters({
+  //     category_id: categoryId ? Number(categoryId) : null,
+  //     year: year ? Number(year) : null,
+  //     month: month ? Number(month) : null,
+  //     keyword: trimmedKeyword,
+  //     search_by: isAdvanced ? null : searchBy,
+  //   });
 
-    navigate("/search-results");
-  };
+  //   navigate("/search-results");
+  // };
 
   return (
     <>
@@ -101,9 +101,37 @@ const HomePage = () => {
           </p>
         </div>
 
-        {/* Search Container */}
+        {/* Coming Soon Banner */}
         <div className="w-full max-w-5xl bg-white dark:bg-[#2e1d19] rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-[#e6dedb] dark:border-[#3e2c26] overflow-hidden">
-          {/* Court Level */}
+          <div className="flex flex-col items-center justify-center py-16 px-6 text-center gap-4">
+            <div className="w-16 h-16 rounded-full bg-yellow-100 dark:bg-yellow-900/30 flex items-center justify-center mb-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-8 h-8 text-yellow-500"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth={1.5}
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z"
+                />
+              </svg>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-bold text-[#181311] dark:text-white">
+              Coming Soon
+            </h3>
+            <p className="text-sm sm:text-base color_1 max-w-md">
+              Our judgment search database is currently being prepared. Stay
+              tuned — powerful legal research tools are on the way.
+            </p>
+          </div>
+        </div>
+
+        {/* SEARCH SECTION COMMENTED OUT
+        <div className="w-full max-w-5xl bg-white dark:bg-[#2e1d19] rounded-xl shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-[#e6dedb] dark:border-[#3e2c26] overflow-hidden">
           <div className="border-b border-[#e6dedb] dark:border-[#3e2c26] bg-[#faf8f7] dark:bg-[#251815] px-6 py-4">
             <label className="text-sm font-bold tracking-wider color_1 mb-3 block">
               Select Court Level
@@ -116,7 +144,6 @@ const HomePage = () => {
           </div>
 
           <div className="p-6 md:p-8 space-y-8">
-            {/* Case Category */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               <div className="space-y-2">
                 <label className="block text-sm font-semibold dark:text-[#e0dad7]">
@@ -136,13 +163,10 @@ const HomePage = () => {
               </div>
             </div>
 
-            {/* Year + Month */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
               <div className="lg:col-span-4 grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-semibold dark:text-[#e0dad7]">
-                    Year
-                  </label>
+                  <label className="block text-sm font-semibold dark:text-[#e0dad7]">Year</label>
                   <select
                     value={year}
                     onChange={(e) => setYear(e.target.value)}
@@ -152,17 +176,13 @@ const HomePage = () => {
                     {Array.from({ length: 7 }, (_, i) => {
                       const y = new Date().getFullYear() - i;
                       return (
-                        <option key={y} value={y}>
-                          {y}
-                        </option>
+                        <option key={y} value={y}>{y}</option>
                       );
                     })}
                   </select>
                 </div>
                 <div>
-                  <label className="block text-sm font-semibold dark:text-[#e0dad7]">
-                    Month
-                  </label>
+                  <label className="block text-sm font-semibold dark:text-[#e0dad7]">Month</label>
                   <select
                     value={month}
                     onChange={(e) => setMonth(e.target.value)}
@@ -185,12 +205,9 @@ const HomePage = () => {
                 </div>
               </div>
 
-              {/* Search By (Hidden only when Advanced) */}
               {!isAdvanced && (
                 <div className="lg:col-span-6 space-y-2">
-                  <label className="block text-sm font-semibold dark:text-[#e0dad7]">
-                    Search By
-                  </label>
+                  <label className="block text-sm font-semibold dark:text-[#e0dad7]">Search By</label>
                   <select
                     value={searchBy}
                     onChange={(e) => setSearchBy(e.target.value)}
@@ -207,32 +224,20 @@ const HomePage = () => {
               )}
             </div>
 
-            {/* Search Query + Buttons */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-end">
-              <div
-                className={`${isAdvanced ? "lg:col-span-8" : "lg:col-span-6"} space-y-2`}
-              >
-                <label className="block text-sm font-semibold dark:text-[#e0dad7]">
-                  Search Query
-                </label>
+              <div className={`${isAdvanced ? "lg:col-span-8" : "lg:col-span-6"} space-y-2`}>
+                <label className="block text-sm font-semibold dark:text-[#e0dad7]">Search Query</label>
                 <input
                   value={keyword}
                   onChange={(e) => setKeyword(e.target.value)}
                   className="form-input block w-full p-3 input_border bg-white dark:bg-[#251815] rounded-lg"
-                  placeholder={
-                    isAdvanced
-                      ? "Legislation, Section, Judge, Keywords"
-                      : getPlaceholder()
-                  }
+                  placeholder={isAdvanced ? "Legislation, Section, Judge, Keywords" : getPlaceholder()}
                   type="text"
                 />
               </div>
 
               <div className="lg:col-span-2">
-                <button
-                  onClick={handleSearch}
-                  className="px-4 py-2 btn_primary rounded-full"
-                >
+                <button onClick={handleSearch} className="px-4 py-2 btn_primary rounded-full">
                   Search
                 </button>
               </div>
@@ -248,6 +253,8 @@ const HomePage = () => {
             </div>
           </div>
         </div>
+        END SEARCH SECTION */}
+
       </main>
       <Footer />
     </>
