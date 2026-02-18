@@ -1,4 +1,5 @@
 import React, { createContext, useState, useRef } from "react";
+import {API_URL} from "../config/config.json";
 
 export const SearchContext = createContext();
 
@@ -37,8 +38,8 @@ export const SearchProvider = ({ children }) => {
 
     const endpoint =
       searchMode === "advanced"
-        ? "http://10.100.0.1/api/search/advanced"
-        : "http://10.100.0.1/api/search/normal";
+        ? `${API_URL}/search/advanced`
+        : `${API_URL}/search/normal`;
 
     let body;
 
@@ -98,7 +99,7 @@ export const SearchProvider = ({ children }) => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://10.100.0.1/api/search/refine", {
+      const res = await fetch(`${API_URL}/search/refine`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
