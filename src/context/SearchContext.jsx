@@ -37,8 +37,8 @@ export const SearchProvider = ({ children }) => {
 
     const endpoint =
       searchMode === "advanced"
-        ? "http://localhost:8000/search/advanced"
-        : "http://localhost:8000/search/normal";
+        ? "http://10.100.0.1/api/search/advanced"
+        : "http://10.100.0.1/api/search/normal";
 
     let body;
 
@@ -98,7 +98,7 @@ export const SearchProvider = ({ children }) => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://localhost:8000/search/refine", {
+      const res = await fetch("http://10.100.0.1/api/search/refine", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
