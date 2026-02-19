@@ -128,10 +128,32 @@ const HomePage = () => {
                   className="form-select block w-full p-3 input_border bg-[#fcfbfb] dark:bg-[#251815] rounded-lg"
                 >
                   <option value="">All Categories</option>
-                  <option value="1">1</option>
-                  <option value="2">2</option>
-                  <option value="3">3</option>
-                  <option value="4">4</option>
+                  <option value="1">Ref. Under Article 317(1)</option>
+                  <option value="2">Transferred Case Civil</option>
+                  <option value="3">Contempt Petitions</option>
+                  <option value="4">Special Leave Petition Criminal</option>
+                  <option value="5">SMC(Crl)</option>
+                  <option value="6">Suo Motu WP Criminal</option>
+                  <option value="7">Criminal Appeal</option>
+                  <option value="8">Transfer Petition Criminal</option>
+                  <option value="9">Writ Petition Civil</option>
+                  <option value="10">Civil Appeal</option>
+                  <option value="11">Suo Motu WP Civil</option>
+                  <option value="12">Writ Petition Criminal</option>
+                  <option value="13">Source Files</option>
+                  <option value="14">Arbitration Petition</option>
+                  <option value="15">Original Suit</option>
+                  <option value="16">Special Leave Petition Civil</option>
+                  <option value="17">Review Petition Civil</option>
+                  <option value="18">Suo Motu Writ Civil</option>
+                  <option value="19">Review Petition Criminal</option>
+                  <option value="20">Misc Applications</option>
+                  <option value="21">Curative Petition Civil</option>
+                  <option value="22">Suo Moto Contempt Pet. Civil</option>
+                  <option value="23">Transfer Case Criminal</option>
+                  <option value="24">Transfer Petition Civil</option>
+                  <option value="25">Special Reference</option>
+
                 </select>
               </div>
             </div>
@@ -221,7 +243,7 @@ const HomePage = () => {
                   className="form-input block w-full p-3 input_border bg-white dark:bg-[#251815] rounded-lg"
                   placeholder={
                     isAdvanced
-                      ? "Legislation, Section, Judge, Keywords"
+                      ? "Enter keywords separated by commas (e.g. tax, india, contract)"
                       : getPlaceholder()
                   }
                   type="text"
