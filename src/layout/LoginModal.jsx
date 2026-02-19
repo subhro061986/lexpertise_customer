@@ -114,113 +114,116 @@ const LoginModal = ({ open, onClose, onSignupClick }) => {
 
   if (!open) return null;
 
-  return (
-    <div className="fixed inset-0 z-[9999] bg-black/40 flex items-center justify-center">
-      <div className="relative bg-white w-[92%] max-w-md rounded-2xl p-1 overflow-hidden">
+  // return (
+  //   <div className="fixed inset-0 z-[9999] bg-black/40 flex items-center justify-center">
+  //     <div className="relative bg-white w-[92%] max-w-md rounded-2xl p-1 overflow-hidden">
 
-        {/* Header */}
-        <div className="bg-[#F5F6F7] p-6 mb-6 relative rounded-t-2xl">
-          <button onClick={onClose} className="absolute top-4 right-4">
-            <img src={closecircle} alt="Close" className="w-7 h-7" />
-          </button>
-          <h2 className="text-2xl font-bold text-center mb-2">Login</h2>
-          <p className="text-center text-sm text-gray-500">
-            Access thousands of judgments and associated information to begin
-            your legal research journey
-          </p>
-        </div>
+  //       {/* Header */}
+  //       <div className="bg-[#F5F6F7] p-6 mb-6 relative rounded-t-2xl">
+  //         <button onClick={onClose} className="absolute top-4 right-4">
+  //           <img src={closecircle} alt="Close" className="w-7 h-7" />
+  //         </button>
+  //         <h2 className="text-2xl font-bold text-center mb-2">Login</h2>
+  //         <p className="text-center text-sm text-gray-500">
+  //           Access thousands of judgments and associated information to begin
+  //           your legal research journey
+  //         </p>
+  //       </div>
 
-        {/* Body */}
-        <div className="px-6 pb-6">
+  //       {/* Body */}
+  //       <div className="px-6 pb-6">
 
-          {error && (
-            <p className="text-red-600 text-sm mb-4 whitespace-pre-line">{error}</p>
-          )}
+  //         {error && (
+  //           <p className="text-red-600 text-sm mb-4 whitespace-pre-line">{error}</p>
+  //         )}
 
-          {/* Google button container */}
-          {!gsiError ? (
-            <div ref={googleBtnRef} className="w-full mb-2 min-h-[44px] flex items-center justify-center">
-              {!gsiReady && (
-                <div className="w-full py-3 rounded-lg border border-gray-200 flex items-center justify-center gap-3 text-sm text-gray-400">
-                  <img src={googleLogo} alt="Google" className="w-5 h-5 opacity-50" />
-                  <span>Loading Google Sign-In...</span>
-                </div>
-              )}
-            </div>
-          ) : (
-            <p className="text-xs text-center text-gray-400 mb-2">
-              Google Sign-In unavailable
-            </p>
-          )}
+  //         {/* Google button container */}
+  //         {!gsiError ? (
+  //           <div ref={googleBtnRef} className="w-full mb-2 min-h-[44px] flex items-center justify-center">
+  //             {!gsiReady && (
+  //               <div className="w-full py-3 rounded-lg border border-gray-200 flex items-center justify-center gap-3 text-sm text-gray-400">
+  //                 <img src={googleLogo} alt="Google" className="w-5 h-5 opacity-50" />
+  //                 <span>Loading Google Sign-In...</span>
+  //               </div>
+  //             )}
+  //           </div>
+  //         ) : (
+  //           <p className="text-xs text-center text-gray-400 mb-2">
+  //             Google Sign-In unavailable
+  //           </p>
+  //         )}
 
-          <div className="flex items-center my-4">
-            <div className="flex-1 h-px bg-gray-300" />
-            <span className="px-3 text-sm text-gray-500">Or</span>
-            <div className="flex-1 h-px bg-gray-300" />
-          </div>
+  //         <div className="flex items-center my-4">
+  //           <div className="flex-1 h-px bg-gray-300" />
+  //           <span className="px-3 text-sm text-gray-500">Or</span>
+  //           <div className="flex-1 h-px bg-gray-300" />
+  //         </div>
 
-          {/* Email */}
-          <div className="mb-4">
-            <label className="text-sm font-medium">Email Address</label>
-            <div className="relative mt-1">
-              <input
-                type="email"
-                placeholder="Enter Email ID"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-                className="w-full px-3 py-2 rounded-md input_border pr-10"
-              />
-              <img src={emailIcon} alt="Email" className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5" />
-            </div>
-          </div>
+  //         {/* Email */}
+  //         <div className="mb-4">
+  //           <label className="text-sm font-medium">Email Address</label>
+  //           <div className="relative mt-1">
+  //             <input
+  //               type="email"
+  //               placeholder="Enter Email ID"
+  //               value={email}
+  //               onChange={(e) => setEmail(e.target.value)}
+  //               onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+  //               className="w-full px-3 py-2 rounded-md input_border pr-10"
+  //             />
+  //             <img src={emailIcon} alt="Email" className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5" />
+  //           </div>
+  //         </div>
 
-          {/* Password */}
-          <div className="mb-2">
-            <label className="text-sm font-medium">Password</label>
-            <div className="relative mt-1">
-              <input
-                type={showPass ? "text" : "password"}
-                placeholder="Enter Your Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={(e) => e.key === "Enter" && handleLogin()}
-                className="w-full px-3 py-2 rounded-md input_border pr-10"
-              />
-              <img
-                src={eyeIcon}
-                alt="Show"
-                onClick={() => setShowPass(!showPass)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 cursor-pointer"
-              />
-            </div>
-          </div>
+  //         {/* Password */}
+  //         <div className="mb-2">
+  //           <label className="text-sm font-medium">Password</label>
+  //           <div className="relative mt-1">
+  //             <input
+  //               type={showPass ? "text" : "password"}
+  //               placeholder="Enter Your Password"
+  //               value={password}
+  //               onChange={(e) => setPassword(e.target.value)}
+  //               onKeyDown={(e) => e.key === "Enter" && handleLogin()}
+  //               className="w-full px-3 py-2 rounded-md input_border pr-10"
+  //             />
+  //             <img
+  //               src={eyeIcon}
+  //               alt="Show"
+  //               onClick={() => setShowPass(!showPass)}
+  //               className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 cursor-pointer"
+  //             />
+  //           </div>
+  //         </div>
 
-          <div className="text-right text-sm mt-1 cursor-pointer hover:underline text-gray-500">
-            Forgot Password?
-          </div>
+  //         <div className="text-right text-sm mt-1 cursor-pointer hover:underline text-gray-500">
+  //           Forgot Password?
+  //         </div>
 
-          <button
-            onClick={handleLogin}
-            disabled={loading}
-            className="w-40 mt-6 py-3 rounded-full btn_primary block mx-auto disabled:opacity-50"
-          >
-            {loading ? "Logging in..." : "Login"}
-          </button>
+  //         <button
+  //           onClick={handleLogin}
+  //           disabled={loading}
+  //           className="w-40 mt-6 py-3 rounded-full btn_primary block mx-auto disabled:opacity-50"
+  //         >
+  //           {loading ? "Logging in..." : "Login"}
+  //         </button>
 
-          <div className="text-center text-sm mt-6">
-            Don&apos;t have an account?{" "}
-            <span
-              className="font-bold cursor-pointer hover:underline"
-              onClick={() => { onClose(); onSignupClick?.(); }}
-            >
-              Sign up
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+  //         <div className="text-center text-sm mt-6">
+  //           Don&apos;t have an account?{" "}
+  //           <span
+  //             className="font-bold cursor-pointer hover:underline"
+  //             onClick={() => { onClose(); onSignupClick?.(); }}
+  //           >
+  //             Sign up
+  //           </span>
+  //         </div>
+  //       </div>
+  //     </div>
+  //   </div>
+  // );
+  return(
+    <h1 className="text-center text-xl font-bold">Coming Soon</h1>
+  )
 };
 
 export default LoginModal;

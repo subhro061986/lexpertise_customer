@@ -17,13 +17,6 @@ const Navigation = ({ onLoginClick, onSignupClick }) => {
 
       <Routes>
         <Route path="/"               Component={HomePage} />
-        <Route path="/pricing"        Component={PricingPage} />
-        <Route path="/result"         Component={ResultPage} />
-        <Route path="/details"        Component={DetailsPage} />
-        <Route path="/about"          Component={AboutPage} />
-        <Route path="/search-results" Component={SearchResultsPage} />
-        <Route path="/case/:uuid"     Component={CaseDetailPage} />
-
         {/* Private — must be logged in */}
         <Route
           path="/pdf-viewer"
