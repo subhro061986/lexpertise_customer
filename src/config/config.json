@@ -1,5 +1,5 @@
 {
-    "API_URL": "http://127.0.0.1:8001",
+    "API_URL": "http://10.100.0.1:81/pwa-api",
     "LOGIN_API":"login",
     "GET_USER":"get_user"   
 }
