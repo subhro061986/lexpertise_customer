@@ -2,14 +2,24 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 import tailwindcss from '@tailwindcss/vite'
+import { copyFileSync } from 'fs'
 
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
+    {
+      name: 'copy-pdfjs-worker',
+      buildStart() {
+        copyFileSync(
+          'node_modules/pdfjs-dist/build/pdf.worker.min.mjs',
+          'public/pdf.worker.min.mjs'
+        )
+      }
+    },
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.svg', 'robots.txt'],
+      includeAssets: ['favicon.svg', 'robots.txt', 'pdf.worker.min.mjs'],
       manifest: {
         name: 'Lexpertise Vite React PWA',
         short_name: 'Lexpertise',

@@ -9,8 +9,7 @@ import { API_URL } from "../config/config.json";
 
 // ─── Worker: pinned to react-pdf's own bundled pdfjs version (4.4.168) ───────
 // import.meta.url approach breaks on mobile PWAs — CDN is more reliable here.
-pdfjs.GlobalWorkerOptions.workerSrc =
-  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.4.168/pdf.worker.min.mjs";
+pdfjs.GlobalWorkerOptions.workerSrc = "/pdf.worker.min.mjs";
 
 const isIOS     = () =>
   /iPad|iPhone|iPod/.test(navigator.userAgent) ||
