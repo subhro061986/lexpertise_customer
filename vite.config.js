@@ -12,7 +12,7 @@ export default defineConfig({
       name: 'copy-pdfjs-worker',
       buildStart() {
         copyFileSync(
-          'node_modules/pdfjs-dist/build/pdf.worker.min.mjs',
+          'node_modules/react-pdf/node_modules/pdfjs-dist/build/pdf.worker.min.mjs',
           'public/pdf.worker.min.mjs'
         )
       }
